@@ -15,7 +15,7 @@ export class DemographOptionService {
         private readonly demographRepository: Repository<Demograph>,
     ) { }
 
-    async create(createDemographOptionDto: CreateDemographOptionDto): Promise<DemographOption> {
+    async create(createDemographOptionDto: CreateDemographOptionDto): Promise<DemographOption | any> {
         // Cari Demograph berdasarkan ID
         const demograph = await this.demographRepository.findOne({ where: { demograph_id: createDemographOptionDto.demograph_id } });
         if (!demograph) {
@@ -25,7 +25,12 @@ export class DemographOptionService {
             ...createDemographOptionDto,
             demograph_id: demograph
         });
-        return await this.demographOptionRepository.save(demographOption);
+        const savedDemographOption = await this.demographOptionRepository.save(demographOption);
+        return {
+            success: true,
+            message: 'Demograph option created successfully',
+            data: savedDemographOption,
+        };
     }
 
     async findAll(): Promise<DemographOption[]> {
@@ -36,36 +41,36 @@ export class DemographOptionService {
         return await this.demographOptionRepository.findOne({ where: { demograph_option_id }, relations: ['demograph_id'] });
     }
 
-    async update(id: number, updateDemographOptionDto: UpdateDemographOptionDto): Promise<DemographOption> {
+    async update(id: number, updateDemographOptionDto: UpdateDemographOptionDto) {
         const demographOption = await this.findOne(id);
         if (!demographOption) {
             throw new NotFoundException('DemographOption not found');
         }
 
-        demographOption.option_value = updateDemographOptionDto.option_value;
+        Object.assign(demographOption, updateDemographOptionDto);
 
-        if (updateDemographOptionDto.demograph_id) {
-            const demograph = await this.demographRepository.findOne({
-                where: { demograph_id: updateDemographOptionDto.demograph_id },
-            });
-            if (!demograph) {
-                throw new NotFoundException('Demograph not found');
-            }
-            demographOption.demograph_id = demograph;
-        }
+        const updatedDemographOption = await this.demographOptionRepository.save(demographOption);
 
-        return await this.demographOptionRepository.save(demographOption);
+        return {
+            success: true,
+            message: 'Demograph updated successfully',
+            data: updatedDemographOption,
+        };
 
     }
 
-    async remove(id: number): Promise<void> {
+    async remove(id: number) {
         const demographOption = await this.findOne(id);
         if (!demographOption) {
-            // Handle entity not found
-            return;
+            throw new NotFoundException('Demograph option not found')
         }
 
-        await this.demographOptionRepository.remove(demographOption);
+        const removedDemographOption = await this.demographOptionRepository.remove(demographOption);
+        return {
+            success: true,
+            message: 'Demograph removed successfully',
+            data: removedDemographOption,
+        };
     }
 
     async getDemographsWithOptions() {

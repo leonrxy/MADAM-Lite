@@ -1,4 +1,12 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDemographOptionDto } from './create-demograph-option.dto';
+import { IsNotEmpty, IsString } from "class-validator";
 
-export class UpdateDemographOptionDto extends PartialType(CreateDemographOptionDto) {}
+export class UpdateDemographOptionDto{
+
+    @IsNotEmpty()
+    @IsString()
+    option_value: string;
+
+    @IsNotEmpty()
+    @IsString()
+    result_value: string;
+}

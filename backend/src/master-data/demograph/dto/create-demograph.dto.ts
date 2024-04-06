@@ -5,5 +5,4 @@ export class CreateDemographDto {
     @IsString()
     parameter_name: string;
     
-    options: string[];
 }

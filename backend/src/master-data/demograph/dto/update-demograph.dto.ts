@@ -1,4 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateDemographDto } from './create-demograph.dto';
+import { IsNotEmpty, IsString } from "class-validator";
 
-export class UpdateDemographDto extends PartialType(CreateDemographDto) {}
+export class UpdateDemographDto{
+    @IsNotEmpty()
+    @IsString()
+    parameter_name: string;
+}
