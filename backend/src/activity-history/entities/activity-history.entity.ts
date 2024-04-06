@@ -15,6 +15,6 @@ export class ActivityHistory {
     @Column({ type: "varchar", length: 255, nullable: false })
     activity: string;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: false })
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: false, precision: null })
     created_at: Date;
 }

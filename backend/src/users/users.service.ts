@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,23 +17,25 @@ export class UsersService {
 
   }
   async create(createUserDto: CreateUserDto) {
+    const errors = await validate(createUserDto);
+    if (errors.length > 0) {
+      throw new BadRequestException(errors);
+    }
+    const existingUser = await this.userRepository.findOne({ where: { username: createUserDto.username } });
+    if (existingUser) {
+      throw new ConflictException('Username is already taken');
+    }
     try {
-      // Validate DTO
-      const errors = await validate(createUserDto);
-      if (errors.length > 0) {
-        throw new BadRequestException(errors);
-      }
-      const findusername = await this.userRepository.findOne({ where: { username: createUserDto.username } });
-      if (findusername) {
-        throw new NotFoundException('Username is already taken');
-      }
       const { password, ...userData } = createUserDto;
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = await this.userRepository.save({ ...userData, password: hashedPassword });
-      return { message: 'User created successfully', data: newUser };
+      return {
+        status: "success",
+        message: 'User created successfully',
+        data: newUser
+      };
     } catch (error) {
-      const errorMessage = 'Unable to create user. Please try again later.';
-      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException('Failed to create user');
     }
   }
 
@@ -45,15 +47,24 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { user_id } });
   }
 
-  async update(user_id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(user_id: number, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(user_id);
     if (!user) {
       throw new NotFoundException;
     }
 
-    Object.assign(user, updateUserDto);
+    try {
+      Object.assign(user, updateUserDto);
 
-    return await this.userRepository.save(user);
+      const updatedUser = await this.userRepository.save(user);
+      return {
+        status: "success",
+        message: 'User updated successfully',
+        data: updatedUser
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to update user');
+    }
   }
 
   async remove(id: number) {
@@ -61,7 +72,16 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException;
     }
-    return await this.userRepository.remove(user);
+    try {
+      const removedUser = await this.userRepository.remove(user);
+      return {
+        status: "success",
+        message: 'User removed successfully',
+        data: removedUser
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to remove user');
+    }
   }
 
   async findByUsername(username: string): Promise<User> {
@@ -69,13 +89,11 @@ export class UsersService {
   }
 
   async changePassword(user_id: number, newPassword: string) {
+    const user = await this.userRepository.findOne({ where: { user_id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     try {
-      // Dapatkan pengguna dari database berdasarkan ID
-      const user = await this.userRepository.findOne({ where: { user_id } });
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-
       // Hash kata sandi baru
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -84,12 +102,7 @@ export class UsersService {
       await this.userRepository.save(user);
       return await { status: "success", message: 'Password changed successfully' };
     } catch (error) {
-      // Tangani kesalahan dengan mengembalikan pesan kesalahan yang sesuai
-      if (error instanceof NotFoundException) {
-        throw error;
-      } else {
-        throw new HttpException('Failed to change password', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
+      throw new InternalServerErrorException('Failed to change password user');
     }
   }
 }
