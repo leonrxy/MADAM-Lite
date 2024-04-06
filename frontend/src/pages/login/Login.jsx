@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaBolt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Logo from '../../assets/Logo.svg'; // Adjust the path based on the actual location
+
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,13 +51,9 @@ const Login = () => {
           onSubmit={handleLogin}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
         >
-          <h3 className="text-center mb-4">
-            <span className="text-4xl font-bold text-red-500">MADAM</span>
-            <span className="text-4xl font-bold relative inline-block">
-              Lite
-              <FaBolt className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 text-black text-xs" />
-            </span>
-          </h3>
+           <h3 className="text-center mb-4 flex items-center justify-center space-x-1">
+            <img src={Logo} alt="Logo" className="h-10" />
+            </h3>
           <h2 className="text-3xl font-bold mb-4 text-left">Login</h2>
           <p className="text-base text-left mb-4 text-gray-600">
             Welcome! Please enter your profile

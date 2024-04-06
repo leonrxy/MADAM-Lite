@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Logo from '../assets/Logo';
+import Logo from '../assets/Logo.svg';
 import { AiTwotoneAppstore } from "react-icons/ai";
 
 const Sidebar = () => {
   return (
-    <div className="h-full bg-white-800 text-black-100 w-64">
+    <div className="h-full bg-white-800 text-black-100 w-80">
       <div className="flex items-center justify-center p-4">
-        <Logo />
+      <img src={Logo} alt="Logo" className="h-16 w-36" />
       </div>
       <ul className="py-2">
         <li className="px-4 py-2 hover:bg-gray-200">
