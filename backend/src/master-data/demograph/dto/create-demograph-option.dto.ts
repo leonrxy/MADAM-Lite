@@ -12,6 +12,4 @@ export class CreateDemographOptionDto {
     @IsString()
     result_value: string;
 
-    created_at: Date;
-    updated_at: Date;
 }

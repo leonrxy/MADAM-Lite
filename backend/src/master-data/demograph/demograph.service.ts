@@ -16,7 +16,7 @@ export class DemographService {
   }
   async create(createDemographDto: CreateDemographDto): Promise<Demograph> {
     const demograph = new Demograph();
-    demograph.parameter_name = createDemographDto.question;
+    demograph.parameter_name = createDemographDto.parameter_name;
 
     return await this.demographRepository.save(demograph);
   }

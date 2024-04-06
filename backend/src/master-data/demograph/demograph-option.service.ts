@@ -21,9 +21,10 @@ export class DemographOptionService {
         if (!demograph) {
             throw new NotFoundException('Demograph not found');
         }
-        const demographOption = new DemographOption();
-        demographOption.option_value = createDemographOptionDto.option_value;
-        demographOption.demograph_id = demograph;
+        const demographOption = this.demographOptionRepository.create({
+            ...createDemographOptionDto,
+            demograph_id: demograph
+        });
         return await this.demographOptionRepository.save(demographOption);
     }
 
@@ -76,7 +77,11 @@ export class DemographOptionService {
             console.log('Demograph:', demograph);
             return {
                 ...demograph,
-                options: demograph.options.map(option => ({ id: option.demograph_option_id, option_value: option.option_value }))
+                options: demograph.options.map(option => ({
+                    id: option.demograph_option_id,
+                    option_value: option.option_value,
+                    result_value: option.result_value
+                }))
             };
         });
         return dropdownData;
