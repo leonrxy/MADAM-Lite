@@ -20,7 +20,13 @@ export default function App() {
           token: {
             fontFamily: "Poppins, sans-serif",
             colorPrimary: '#dc362e',
+            
           },
+          components:{
+            Menu:{
+              itemHeight: 60
+            }
+          }
         }}
       >
         <Routes />

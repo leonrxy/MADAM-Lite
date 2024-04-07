@@ -97,20 +97,22 @@ const DashboardLayout = ({ children }) => {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        breakpoint="lg"
         theme="light"
-        width={250}
+        width={260}
         style={{
-            borderRight: "1px solid #e8e8e8", // Menambahkan outline
-          }}
+          borderRight: "1px solid #e8e8e8",
+        }}
       >
         <div className="p-4 mt-4 mb-2">
           <img src={Logo} alt="Logo" className="w-42 h-auto mx-auto" />
         </div>
-        <Menu mode="inline" defaultSelectedKeys={["1"]}>
-          {menuItems.map((item, index) => (
+        <Menu
+          mode="inline"
+          defaultSelectedKeys={["dashboard"]}
+        >
+          {menuItems.map((item) => (
             <React.Fragment key={item.key}>
-              {index > 0 && <div style={{ height: "15px" }} />}{" "}
-              {/* Menambahkan jarak vertikal */}
               {item.subMenuItems ? (
                 <Menu.SubMenu
                   key={item.key}
@@ -185,7 +187,6 @@ const DashboardLayout = ({ children }) => {
             className="flex items-center mr-4 bg-gray-100 hover:bg-gray-400 p-6 rounded-xl focus:outline-none focus:shadow-outline"
             shape="round"
             classNames=""
-            // style={{ padding: "24px 10px", background: "#F4F0F0"}} // Menambahkan padding
           >
             <Dropdown overlay={menu} trigger={["click"]}>
               <div className="flex items-center justify-between w-full">
