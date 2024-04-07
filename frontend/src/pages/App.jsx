@@ -8,9 +8,7 @@ export default function App() {
   const isAuthenticated = !!sessionStorage.getItem("token"); // Cek apakah token tersedia di localStorage
   // Redirect otomatis jika token tersedia
   useEffect(() => {
-    if (isAuthenticated) {
-      navigateTo("/dashboard");
-    } else {
+    if (!isAuthenticated) {
       navigateTo("/login");
     }
   }, [navigateTo, isAuthenticated]);
