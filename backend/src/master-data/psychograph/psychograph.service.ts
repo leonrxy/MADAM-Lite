@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreatePsychographDto } from './dto/create-psychograph.dto';
 import { UpdatePsychographDto } from './dto/update-psychograph.dto';
 import { Psychograph } from './entities/psychograph.entity';
@@ -12,12 +12,21 @@ export class PsychographService {
     private readonly psychographRepository:
       Repository<Psychograph>
   ) { }
-  async create(createPsychographDto: CreatePsychographDto): Promise<Psychograph> {
-    const psychograph = new Psychograph();
-    psychograph.option_value = createPsychographDto.option_value;
-    psychograph.type = createPsychographDto.type;
+  async create(createPsychographDto: CreatePsychographDto) {
+    try {
+      const psychograph = new Psychograph();
+      psychograph.option_value = createPsychographDto.option_value;
+      psychograph.type = createPsychographDto.type;
 
-    return await this.psychographRepository.save(psychograph);
+      const savedPsychograph = await this.psychographRepository.save(psychograph);
+      return {
+        success: true,
+        message: 'Psychograph created successfully',
+        data: savedPsychograph,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create psychograph');
+    }
   }
 
   async findAll(): Promise<Psychograph[]> {
@@ -31,14 +40,36 @@ export class PsychographService {
   async update(id: number, updatePsychographDto: UpdatePsychographDto) {
     const psychograph = await this.findOne(id);
     if (!psychograph) {
-        throw new NotFoundException('Psychograph not found');
+      throw new NotFoundException('Psychograph not found');
     }
     Object.assign(psychograph, updatePsychographDto);
-    return await this.psychographRepository.save(psychograph);
-}
+    try {
+      const updatedPsychograph = await this.psychographRepository.save(psychograph);
+      return {
+        success: true,
+        message: 'Psychograph updated successfully',
+        data: updatedPsychograph,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to update psychograph');
+    }
+  }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number) {
     const psychograph = await this.findOne(id);
-    await this.psychographRepository.remove(psychograph);
+    if (!psychograph) {
+      throw new NotFoundException('Psychograph not found');
+    }
+
+    try {
+      const removedPsychograph = await this.psychographRepository.remove(psychograph);
+      return {
+        success: true,
+        message: 'Psychograph removed successfully',
+        data: removedPsychograph,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to remove psychograph');
+    }
   }
 }

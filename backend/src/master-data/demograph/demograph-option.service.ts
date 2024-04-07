@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateDemographOptionDto } from './dto/create-demograph-option.dto';
 import { UpdateDemographOptionDto } from './dto/update-demograph-option.dto';
 import { DemographOption } from './entities/demograph-option.entity';
@@ -21,16 +21,20 @@ export class DemographOptionService {
         if (!demograph) {
             throw new NotFoundException('Demograph not found');
         }
-        const demographOption = this.demographOptionRepository.create({
-            ...createDemographOptionDto,
-            demograph_id: demograph
-        });
-        const savedDemographOption = await this.demographOptionRepository.save(demographOption);
-        return {
-            success: true,
-            message: 'Demograph option created successfully',
-            data: savedDemographOption,
-        };
+        try {
+            const demographOption = this.demographOptionRepository.create({
+                ...createDemographOptionDto,
+                demograph_id: demograph
+            });
+            const savedDemographOption = await this.demographOptionRepository.save(demographOption);
+            return {
+                success: true,
+                message: 'Demograph option created successfully',
+                data: savedDemographOption,
+            };
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to create demograph option');
+        }
     }
 
     async findAll(): Promise<DemographOption[]> {
@@ -44,18 +48,22 @@ export class DemographOptionService {
     async update(id: number, updateDemographOptionDto: UpdateDemographOptionDto) {
         const demographOption = await this.findOne(id);
         if (!demographOption) {
-            throw new NotFoundException('DemographOption not found');
+            throw new NotFoundException('Demograph option not found');
         }
 
         Object.assign(demographOption, updateDemographOptionDto);
 
-        const updatedDemographOption = await this.demographOptionRepository.save(demographOption);
+        try {
+            const updatedDemographOption = await this.demographOptionRepository.save(demographOption);
 
-        return {
-            success: true,
-            message: 'Demograph updated successfully',
-            data: updatedDemographOption,
-        };
+            return {
+                success: true,
+                message: 'Demograph updated successfully',
+                data: updatedDemographOption,
+            };
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to create demograph option');
+        }
 
     }
 
@@ -65,30 +73,35 @@ export class DemographOptionService {
             throw new NotFoundException('Demograph option not found')
         }
 
-        const removedDemographOption = await this.demographOptionRepository.remove(demographOption);
-        return {
-            success: true,
-            message: 'Demograph removed successfully',
-            data: removedDemographOption,
-        };
+        try {
+            const removedDemographOption = await this.demographOptionRepository.remove(demographOption);
+            return {
+                success: true,
+                message: 'Demograph removed successfully',
+                data: removedDemographOption,
+            };
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to remove demograph option');
+        }
     }
 
     async getDemographsWithOptions() {
-        const demographs = await this.demographRepository.find({ relations: ['options'] });
-        console.log('Demograph:', demographs);
+        try {
+            const demographs = await this.demographRepository.find({ relations: ['options'] });
 
-        // Membentuk struktur data yang cocok untuk dropdown
-        const dropdownData = demographs.map(demograph => {
-            console.log('Demograph:', demograph);
-            return {
-                ...demograph,
-                options: demograph.options.map(option => ({
-                    id: option.demograph_option_id,
-                    option_value: option.option_value,
-                    result_value: option.result_value
-                }))
-            };
-        });
-        return dropdownData;
+            const dropdownData = demographs.map(demograph => {
+                return {
+                    ...demograph,
+                    options: demograph.options.map(option => ({
+                        id: option.demograph_option_id,
+                        option_value: option.option_value,
+                        result_value: option.result_value
+                    }))
+                };
+            });
+            return dropdownData;
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to get dropdown demograph');
+        }
     }
 }

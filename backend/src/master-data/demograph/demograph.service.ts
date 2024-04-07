@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateDemographDto } from './dto/create-demograph.dto';
 import { UpdateDemographDto } from './dto/update-demograph.dto';
 import { Demograph } from './entities/demograph.entity';
@@ -18,15 +18,19 @@ export class DemographService {
   ) {
   }
   async create(createDemographDto: CreateDemographDto) {
-    const demograph = this.demographRepository.create(createDemographDto);
+    try {
+      const demograph = this.demographRepository.create(createDemographDto);
 
-    const savedDemograph = await this.demographRepository.save(demograph);
+      const savedDemograph = await this.demographRepository.save(demograph);
 
-    return {
-      success: true,
-      message: 'Demograph created successfully',
-      data: savedDemograph,
-    };
+      return {
+        success: true,
+        message: 'Demograph created successfully',
+        data: savedDemograph,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create demograph');
+    }
   }
 
   async findAll(): Promise<Demograph[]> {
@@ -45,12 +49,16 @@ export class DemographService {
 
     Object.assign(demograph, updateDemographDto);
 
-    const updatedDemograph = await this.demographRepository.save(demograph);
-    return {
-      success: true,
-      message: 'Demograph updated successfully',
-      data: updatedDemograph,
-    };
+    try {
+      const updatedDemograph = await this.demographRepository.save(demograph);
+      return {
+        success: true,
+        message: 'Demograph updated successfully',
+        data: updatedDemograph,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to update demograph');
+    }
 
   }
 
@@ -60,23 +68,25 @@ export class DemographService {
       throw new NotFoundException('Demograph not found')
     }
 
-    // Temukan semua DemographOption yang terhubung ke Demograph
     const demographOptions = await this.demographOptionRepository.find({
       where: { demograph_id: demograph.id },
     });
 
-    // Hapus semua DemographOption yang terhubung
     await Promise.all(
       demographOptions.map(async (option) =>
         this.demographOptionRepository.remove(option),
       ),
     );
 
-    const removedDemograph = await this.demographRepository.remove(demograph);
-    return {
-      success: true,
-      message: 'Demograph removed successfully',
-      data: removedDemograph,
-    };
+    try {
+      const removedDemograph = await this.demographRepository.remove(demograph);
+      return {
+        success: true,
+        message: 'Demograph removed successfully',
+        data: removedDemograph,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to remove demograph');
+    }
   }
 }
