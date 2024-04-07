@@ -2,60 +2,84 @@ import CategoryIcon from "../assets/Category.svg";
 import ChartIcon from "../assets/Chart.svg";
 import FolderIcon from "../assets/Folder.svg";
 import SettingIcon from "../assets/Setting.svg";
+import { Link } from "react-router-dom";
+
+function getItem(text, label, key, link, icon, children) {
+  return {
+    key,
+    link,
+    icon,
+    children,
+    label,
+    text,
+  };
+}
 
 const menuItems = [
-  {
-    key: "dashboard",
-    icon: <img src={CategoryIcon} alt="Category" className="menu-icon" />,
-    text: "Dashboard",
-    link: "/dashboard",
-  },
-  {
-    key: "master-data",
-    icon: <img src={FolderIcon} alt="Folder" className="menu-icon" />,
-    text: "Master Data",
-    subMenuItems: [
-      {
-        key: "demograph",
-        text: "Demograph",
-        link: "/master/demograph",
-      },
-      {
-        key: "psychograph",
-        text: "Psychograph",
-        link: "/master/psychograph",
-      },
-    ],
-  },
-  {
-    key: "data-analysis",
-    icon: <img src={ChartIcon} alt="Chart" className="menu-icon" />,
-    text: "Data Analysis",
-    subMenuItems: [
-      {
-        key: "aio-analysis",
-        text: "AIO Analysis",
-        link: "/aio-analysis",
-      },
-      {
-        key: "history",
-        text: "History",
-        link: "/history",
-      },
-    ],
-  },
-  {
-    key: "system-administrator",
-    icon: <img src={SettingIcon} alt="Setting" className="menu-icon" />,
-    text: "System Administrator",
-    subMenuItems: [
-      {
-        key: "user-management",
-        text: "User Management",
-        link: "/user-management",
-      },
-    ],
-  },
+  getItem(
+    "Dashboard",
+    <Link to="/dashboard">Dashboard</Link>,
+    "dashboard",
+    "/dashboard",
+    <img src={CategoryIcon} alt="Category" className="menu-icon" />
+  ),
+  getItem(
+    "Master Data",
+    "Master Data",
+    "master-data",
+    "/master-data",
+    <img src={FolderIcon} alt="Category" className="menu-icon" />,
+    [
+      getItem(
+        "Demograph",
+        <Link to="/demograph">Demograph</Link>,
+        "demograph",
+        "/demograph"
+      ),
+      getItem(
+        "Psychgraph",
+        <Link to="/psychograph">Psychograph</Link>,
+        "psychograph",
+        "/psychograph"
+      ),
+    ]
+  ),
+  getItem(
+    "Data Analysis",
+    "Data Analysis",
+    "data-analysis",
+    "/data-analysis",
+    <img src={ChartIcon} alt="Category" className="menu-icon" />,
+    [
+      getItem(
+        "AIO Analysis",
+        <Link to="/aio-analysis">AIO Analysis</Link>,
+        "aio-analysis",
+        "/aio-analysis"
+      ),
+      getItem(
+        "History",
+        <Link to="/history">History</Link>,
+        "history",
+        "/history"
+      ),
+    ]
+  ),
+  getItem(
+    "System Administrator",
+    "System Administrator",
+    "system-administrator",
+    "/system-administrator",
+    <img src={SettingIcon} alt="Category" className="menu-icon" />,
+    [
+      getItem(
+        "User Management",
+        <Link to="/user-management">User Management</Link>,
+        "user-management",
+        "/user-management"
+      ),
+    ]
+  ),
 ];
 
 export default menuItems;

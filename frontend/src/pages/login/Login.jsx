@@ -132,16 +132,18 @@ const Login = () => {
                   </Form.Item>
                 </Form>
               </div>
+              <Footer
+              className="text-gray-500"
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                PT. Star Indonesia ©{new Date().getFullYear()} Created by TIM
+                PBL UNS
+              </Footer>
             </div>
           </Content>
         </Layout>
-        <Footer
-          style={{
-            textAlign: "center",
-          }}
-        >
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer>
       </Layout>
     </>
   );

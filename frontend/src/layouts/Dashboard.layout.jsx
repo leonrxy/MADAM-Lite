@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Breadcrumb, Layout, Button, Menu, Dropdown, Typography } from "antd";
 import Logo from "../assets/Logo.svg";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FaUserCircle, FaBars, FaTimes, FaAngleDown } from "react-icons/fa";
 import menuItems from "./MenuItems";
 
@@ -13,12 +13,15 @@ const DashboardLayout = ({ children }) => {
   const [activeMenu, setActiveMenu] = useState(null);
   const location = useLocation();
 
+  useEffect(() => {
+    const pathSnippets = location.pathname.split("/").filter((i) => i);
+    const currentPath = `/${pathSnippets[0]}`;
+    const foundMenuItem = menuItems.find((item) => item.link === currentPath);
+    setActiveMenu(foundMenuItem ? foundMenuItem.key : null);
+  }, [location.pathname]);
+
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
-  };
-
-  const handleClick = (key) => {
-    setActiveMenu(key);
   };
 
   const onLogout = () => {
@@ -38,57 +41,36 @@ const DashboardLayout = ({ children }) => {
     // Ambil bagian dari URL yang sesuai dengan setiap menu item dalam menuItems
     const pathSnippets = location.pathname.split("/").filter((i) => i);
 
-    // Dapatkan daftar menuItems yang sesuai dengan URL yang sedang aktif
-    const activeMenuItems = pathSnippets.map((_, index) => {
-      const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
-      return menuItems.find((item) => {
-        if (item.link === url) {
-          return true;
-        }
-        if (item.subMenuItems) {
-          return item.subMenuItems.some((subItem) =>
-            url.startsWith(subItem.link)
+    // Initialize breadcrumb items with "Home"
+    let breadcrumbItems = [<Breadcrumb.Item key="home">Home</Breadcrumb.Item>];
+
+    // Iterate through path snippets to find corresponding menu items
+    let currentPath = "";
+    for (let i = 0; i < pathSnippets.length; i++) {
+      currentPath += `/${pathSnippets[i]}`;
+
+      for (let j = 0; j < menuItems.length; j++) {
+        const menuItem = menuItems[j];
+        if (menuItem.children) {
+          const subMenuItem = menuItem.children.find(
+            (subItem) => subItem.link === currentPath
           );
-        }
-        return false;
-      });
-    });
-
-    // Buat elemen Breadcrumb.Item untuk setiap menu dan submenu yang sesuai
-    const breadcrumbItems = activeMenuItems.map((menuItem, index) => {
-      // Pastikan menuItem tidak bernilai undefined
-      if (!menuItem) return null;
-
-      // Jika menuItem adalah submenu
-      if (menuItem.subMenuItems) {
-        const subMenuItem = menuItem.subMenuItems.find((subItem) =>
-          location.pathname.startsWith(subItem.link)
-        );
-        if (subMenuItem) {
-          return (
-            <React.Fragment
-              key={`breadcrumb-${menuItem.key}-${subMenuItem.key}`}
-            >
-              <Breadcrumb.Item key={`home-${index}`}>Home</Breadcrumb.Item>
+          if (subMenuItem) {
+            breadcrumbItems.push(
               <Breadcrumb.Item key={menuItem.key}>
                 {menuItem.text}
               </Breadcrumb.Item>
+            );
+            breadcrumbItems.push(
               <Breadcrumb.Item key={subMenuItem.key}>
                 {subMenuItem.text}
               </Breadcrumb.Item>
-            </React.Fragment>
-          );
+            );
+            break;
+          }
         }
       }
-
-      // Jika menuItem adalah menu utama atau tidak ada submenu yang cocok
-      return (
-        <React.Fragment key={`breadcrumb-${menuItem.key}`}>
-          <Breadcrumb.Item key={`home-${index}`}>Home</Breadcrumb.Item>
-          <Breadcrumb.Item key={menuItem.key}>{menuItem.text}</Breadcrumb.Item>
-        </React.Fragment>
-      );
-    });
+    }
 
     return breadcrumbItems;
   };
@@ -109,50 +91,11 @@ const DashboardLayout = ({ children }) => {
         <div className="p-4 mt-4 mb-2">
           <img src={Logo} alt="Logo" className="w-42 h-auto mx-auto" />
         </div>
-        <Menu mode="inline" defaultSelectedKeys={["dashboard"]}>
-          {menuItems.map((item) => (
-            <React.Fragment key={item.key}>
-              {item.subMenuItems ? (
-                <Menu.SubMenu
-                  key={item.key}
-                  icon={item.icon}
-                  title={
-                    <span
-                      style={{
-                        color: activeMenu === item.key ? "red" : "inherit",
-                      }}
-                      onClick={() => handleClick(item.key)}
-                    >
-                      {item.text}
-                    </span>
-                  }
-                >
-                  {item.subMenuItems.map((subItem) => (
-                    <Menu.Item key={subItem.key}>
-                      <Link to={subItem.link}>{subItem.text}</Link>
-                    </Menu.Item>
-                  ))}
-                </Menu.SubMenu>
-              ) : (
-                <Menu.Item
-                  key={item.key}
-                  icon={item.icon}
-                  onClick={() => handleClick(item.key)}
-                >
-                  <Link to={item.link}>
-                    <span
-                      style={{
-                        color: activeMenu === item.key ? "red" : "inherit",
-                      }}
-                    >
-                      {item.text}
-                    </span>
-                  </Link>
-                </Menu.Item>
-              )}
-            </React.Fragment>
-          ))}
-        </Menu>
+        <Menu
+          mode="inline"
+          defaultSelectedKeys={[activeMenu]}
+          items={menuItems}
+        ></Menu>
       </Sider>
       <Layout className="site-layout">
         <Header
