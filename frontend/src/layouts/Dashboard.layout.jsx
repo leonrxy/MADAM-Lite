@@ -1,74 +1,17 @@
 import React, { useState } from "react";
-import { Layout, Button, Menu, Dropdown, Typography } from "antd";
+import { Breadcrumb, Layout, Button, Menu, Dropdown, Typography } from "antd";
 import Logo from "../assets/Logo.svg";
-import { Link } from "react-router-dom";
-import CategoryIcon from "../assets/Category.svg";
-import ChartIcon from "../assets/Chart.svg";
-import FolderIcon from "../assets/Folder.svg";
-import SettingIcon from "../assets/Setting.svg";
+import { Link, useLocation } from "react-router-dom";
 import { FaUserCircle, FaBars, FaTimes, FaAngleDown } from "react-icons/fa";
+import menuItems from "./MenuItems";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
-const menuItems = [
-  {
-    key: "dashboard",
-    icon: <img src={CategoryIcon} alt="Category" className="menu-icon" />,
-    text: "Dashboard",
-    link: "/dashboard",
-  },
-  {
-    key: "master-data",
-    icon: <img src={FolderIcon} alt="Folder" className="menu-icon" />,
-    text: "Master Data",
-    subMenuItems: [
-      {
-        key: "demograph",
-        text: "Demograph",
-        link: "/master/demograph",
-      },
-      {
-        key: "psychograph",
-        text: "Psychograph",
-        link: "/master/psychograph",
-      },
-    ],
-  },
-  {
-    key: "data-analysis",
-    icon: <img src={ChartIcon} alt="Chart" className="menu-icon" />,
-    text: "Data Analysis",
-    subMenuItems: [
-      {
-        key: "aio-analysis",
-        text: "AIO Analysis",
-        link: "/analysis",
-      },
-      {
-        key: "history",
-        text: "History",
-        link: "/analysis",
-      },
-    ],
-  },
-  {
-    key: "system-administrator",
-    icon: <img src={SettingIcon} alt="Setting" className="menu-icon" />,
-    text: "System Administrator",
-    subMenuItems: [
-      {
-        key: "user-management",
-        text: "User Management",
-        link: "/admin/user-management",
-      },
-    ],
-  },
-];
-
 const DashboardLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
+  const location = useLocation();
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -83,13 +26,72 @@ const DashboardLayout = ({ children }) => {
     window.location.href = "/login";
   };
 
-  const menu = (
+  const menuNavbar = (
     <Menu>
       <Menu.Item key="1" onClick={onLogout}>
         Logout
       </Menu.Item>
     </Menu>
   );
+
+  const getBreadcrumbs = () => {
+    // Ambil bagian dari URL yang sesuai dengan setiap menu item dalam menuItems
+    const pathSnippets = location.pathname.split("/").filter((i) => i);
+
+    // Dapatkan daftar menuItems yang sesuai dengan URL yang sedang aktif
+    const activeMenuItems = pathSnippets.map((_, index) => {
+      const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
+      return menuItems.find((item) => {
+        if (item.link === url) {
+          return true;
+        }
+        if (item.subMenuItems) {
+          return item.subMenuItems.some((subItem) =>
+            url.startsWith(subItem.link)
+          );
+        }
+        return false;
+      });
+    });
+
+    // Buat elemen Breadcrumb.Item untuk setiap menu dan submenu yang sesuai
+    const breadcrumbItems = activeMenuItems.map((menuItem, index) => {
+      // Pastikan menuItem tidak bernilai undefined
+      if (!menuItem) return null;
+
+      // Jika menuItem adalah submenu
+      if (menuItem.subMenuItems) {
+        const subMenuItem = menuItem.subMenuItems.find((subItem) =>
+          location.pathname.startsWith(subItem.link)
+        );
+        if (subMenuItem) {
+          return (
+            <React.Fragment
+              key={`breadcrumb-${menuItem.key}-${subMenuItem.key}`}
+            >
+              <Breadcrumb.Item key={`home-${index}`}>Home</Breadcrumb.Item>
+              <Breadcrumb.Item key={menuItem.key}>
+                {menuItem.text}
+              </Breadcrumb.Item>
+              <Breadcrumb.Item key={subMenuItem.key}>
+                {subMenuItem.text}
+              </Breadcrumb.Item>
+            </React.Fragment>
+          );
+        }
+      }
+
+      // Jika menuItem adalah menu utama atau tidak ada submenu yang cocok
+      return (
+        <React.Fragment key={`breadcrumb-${menuItem.key}`}>
+          <Breadcrumb.Item key={`home-${index}`}>Home</Breadcrumb.Item>
+          <Breadcrumb.Item key={menuItem.key}>{menuItem.text}</Breadcrumb.Item>
+        </React.Fragment>
+      );
+    });
+
+    return breadcrumbItems;
+  };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -107,10 +109,7 @@ const DashboardLayout = ({ children }) => {
         <div className="p-4 mt-4 mb-2">
           <img src={Logo} alt="Logo" className="w-42 h-auto mx-auto" />
         </div>
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={["dashboard"]}
-        >
+        <Menu mode="inline" defaultSelectedKeys={["dashboard"]}>
           {menuItems.map((item) => (
             <React.Fragment key={item.key}>
               {item.subMenuItems ? (
@@ -165,6 +164,7 @@ const DashboardLayout = ({ children }) => {
             justifyContent: "space-between",
             alignItems: "center",
             paddingBlock: "40px",
+            borderBottom: "1px solid #e8e8e8",
           }}
         >
           <Button
@@ -188,7 +188,7 @@ const DashboardLayout = ({ children }) => {
             shape="round"
             classNames=""
           >
-            <Dropdown overlay={menu} trigger={["click"]}>
+            <Dropdown overlay={menuNavbar} trigger={["click"]}>
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center mr-1">
                   <FaUserCircle className="text-2xl mr-2" />
@@ -201,6 +201,28 @@ const DashboardLayout = ({ children }) => {
               </div>
             </Dropdown>
           </Button>
+        </Header>
+        <Header
+          className="site-layout-background"
+          style={{
+            padding: 0,
+            background: "#fff",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingBlock: "5px",
+            borderBottom: "1px solid #e8e8e8",
+          }}
+        >
+          <Breadcrumb
+            style={{
+              margin: "16px 0",
+              background: "#fff",
+              padding: "20px",
+            }}
+          >
+            {getBreadcrumbs()}
+          </Breadcrumb>
         </Header>
         <Content
           className="site-layout-background rounded-xl"
