@@ -1,17 +1,14 @@
 import DashboardLayout from '../../layouts/Dashboard.layout';
-import { Layout, Button } from 'antd';
+import { Layout } from 'antd';
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 const UserManagement = () => {
   return (
     <DashboardLayout>
-        <Header>
-            <Button type="primary">Primary Button</Button>
-        </Header>
         <Content className="p-6"
         >
-            adsadsasdsddsddsd
+            User Management Content
         </Content>
     </DashboardLayout>
   );

@@ -1,14 +1,15 @@
-import React,{ useState } from "react";
-import { Layout, Button, Menu } from "antd";
+import React, { useState } from "react";
+import { Layout, Button, Menu, Dropdown, Typography } from "antd";
 import Logo from "../assets/Logo.svg";
 import { Link } from "react-router-dom";
 import CategoryIcon from "../assets/Category.svg";
 import ChartIcon from "../assets/Chart.svg";
 import FolderIcon from "../assets/Folder.svg";
 import SettingIcon from "../assets/Setting.svg";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaUserCircle, FaBars, FaTimes, FaAngleDown } from "react-icons/fa";
 
 const { Header, Sider, Content } = Layout;
+const { Text } = Typography;
 
 const menuItems = [
   {
@@ -77,6 +78,19 @@ const DashboardLayout = ({ children }) => {
     setActiveMenu(key);
   };
 
+  const onLogout = () => {
+    sessionStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1" onClick={onLogout}>
+        Logout
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -85,6 +99,9 @@ const DashboardLayout = ({ children }) => {
         collapsed={collapsed}
         theme="light"
         width={250}
+        style={{
+            borderRight: "1px solid #e8e8e8", // Menambahkan outline
+          }}
       >
         <div className="p-4 mt-4 mb-2">
           <img src={Logo} alt="Logo" className="w-42 h-auto mx-auto" />
@@ -139,7 +156,14 @@ const DashboardLayout = ({ children }) => {
       <Layout className="site-layout">
         <Header
           className="site-layout-background"
-          style={{ padding: 0, background: "#fff" }}
+          style={{
+            padding: 0,
+            background: "#fff",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingBlock: "40px",
+          }}
         >
           <Button
             type="link"
@@ -157,9 +181,28 @@ const DashboardLayout = ({ children }) => {
               <FaBars className="text-xl text-gray-800 hover:text-black" />
             )}
           </Button>
+          <Button
+            className="flex items-center mr-4 bg-gray-100 hover:bg-gray-400 p-6 rounded-xl focus:outline-none focus:shadow-outline"
+            shape="round"
+            classNames=""
+            // style={{ padding: "24px 10px", background: "#F4F0F0"}} // Menambahkan padding
+          >
+            <Dropdown overlay={menu} trigger={["click"]}>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center mr-1">
+                  <FaUserCircle className="text-2xl mr-2" />
+                </div>
+                <div className="flex flex-col items-start mr-1">
+                  <Text style={{ fontSize: "14px" }}>John Doe</Text>
+                  <Text style={{ fontSize: "12px" }}>Superadmin</Text>
+                </div>
+                <FaAngleDown />
+              </div>
+            </Dropdown>
+          </Button>
         </Header>
         <Content
-          className="site-layout-background"
+          className="site-layout-background rounded-xl"
           style={{
             margin: "24px 16px",
             padding: 24,
