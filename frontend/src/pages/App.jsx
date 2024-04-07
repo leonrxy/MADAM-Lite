@@ -24,7 +24,11 @@ export default function App() {
           },
           components:{
             Menu:{
-              itemHeight: 60
+              itemHeight: 60,
+              colorBgTextActive: "#dc362e",
+              colorIconHover: "#dc362e",
+              colorItemTextHover: "#dc362e",
+              itemSelectedColor: "#dc362e"
             }
           }
         }}

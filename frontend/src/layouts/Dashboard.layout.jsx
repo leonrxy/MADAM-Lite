@@ -11,13 +11,27 @@ const { Text } = Typography;
 const DashboardLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState(null);
+  const [activeSubMenu, setActiveSubMenu] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
-    const pathSnippets = location.pathname.split("/").filter((i) => i);
-    const currentPath = `/${pathSnippets[0]}`;
-    const foundMenuItem = menuItems.find((item) => item.link === currentPath);
-    setActiveMenu(foundMenuItem ? foundMenuItem.key : null);
+    const activeMenu = () => {
+      for (let j = 0; j < menuItems.length; j++) {
+        const menuItem = menuItems[j];
+        if (menuItem.children) {
+          const subMenuItem = menuItem.children.find(
+            (subItem) => subItem.link === location.pathname
+          );
+          
+          if (subMenuItem) {
+            setActiveSubMenu(subMenuItem.key);
+            return menuItem.key;
+          }
+        }
+      }
+    };
+    setActiveMenu(activeMenu() ? activeMenu() : null);
+    //console.log(activeMenu)
   }, [location.pathname]);
 
   const toggleCollapsed = () => {
@@ -49,24 +63,32 @@ const DashboardLayout = ({ children }) => {
     for (let i = 0; i < pathSnippets.length; i++) {
       currentPath += `/${pathSnippets[i]}`;
 
-      for (let j = 0; j < menuItems.length; j++) {
-        const menuItem = menuItems[j];
-        if (menuItem.children) {
-          const subMenuItem = menuItem.children.find(
-            (subItem) => subItem.link === currentPath
-          );
-          if (subMenuItem) {
-            breadcrumbItems.push(
-              <Breadcrumb.Item key={menuItem.key}>
-                {menuItem.text}
-              </Breadcrumb.Item>
+      // Find the menu item that matches the current path
+      const menuItem = menuItems.find((item) => item.link === currentPath);
+      if (menuItem) {
+        breadcrumbItems.push(
+          <Breadcrumb.Item key={menuItem.key}>{menuItem.text}</Breadcrumb.Item>
+        );
+      } else {
+        for (let j = 0; j < menuItems.length; j++) {
+          const menuItem = menuItems[j];
+          if (menuItem.children) {
+            const subMenuItem = menuItem.children.find(
+              (subItem) => subItem.link === currentPath
             );
-            breadcrumbItems.push(
-              <Breadcrumb.Item key={subMenuItem.key}>
-                {subMenuItem.text}
-              </Breadcrumb.Item>
-            );
-            break;
+            if (subMenuItem) {
+              breadcrumbItems.push(
+                <Breadcrumb.Item key={menuItem.key}>
+                  {menuItem.text}
+                </Breadcrumb.Item>
+              );
+              breadcrumbItems.push(
+                <Breadcrumb.Item key={subMenuItem.key}>
+                  {subMenuItem.text}
+                </Breadcrumb.Item>
+              );
+              break;
+            }
           }
         }
       }
@@ -94,6 +116,7 @@ const DashboardLayout = ({ children }) => {
         <Menu
           mode="inline"
           defaultSelectedKeys={[activeMenu]}
+          selectedKeys={[activeSubMenu, activeMenu]}
           items={menuItems}
         ></Menu>
       </Sider>

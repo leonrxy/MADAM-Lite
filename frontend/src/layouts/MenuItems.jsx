@@ -37,7 +37,7 @@ const menuItems = [
         "/demograph"
       ),
       getItem(
-        "Psychgraph",
+        "Psychograph",
         <Link to="/psychograph">Psychograph</Link>,
         "psychograph",
         "/psychograph"
