@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import Routes from "../routes/Index";
-//import './App.css'
 import { useNavigate } from "react-router-dom";
 import { ConfigProvider } from "antd";
 
