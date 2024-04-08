@@ -37,15 +37,26 @@ const Login = () => {
       });
 
       if (response.ok) {
-        const { token } = await response.json();
+        const { data } = await response.json();
         const expiration = new Date();
         expiration.setDate(expiration.getDate() + 1);
-        const tokenData = { value: token, expiresAt: expiration.getTime() };
+        const tokenData = {
+          value: data.token,
+          expiresAt: expiration.getTime(),
+        };
+        const userData = {
+          id: data.user.id,
+          name: data.user.name,
+          username: data.user.username,
+          email: data.user.emaiil,
+          role: data.user.role,
+          expiresAt: expiration.getTime(),
+        };
 
         sessionStorage.setItem("token", JSON.stringify(tokenData));
+        sessionStorage.setItem("userData", JSON.stringify(userData));
         navigateTo("/dashboard");
       } else {
-        //const responseData = await response.json();
         if (response.status === 404) {
           setErrorMessageUsername("Incorrect username");
           setErrorMessagePassword("");
@@ -67,7 +78,6 @@ const Login = () => {
         <title>Login - MADAM Lite</title>
         <meta name="description" content="MADAM Lite" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Helmet>
       <Layout>
         <Layout>
@@ -133,7 +143,7 @@ const Login = () => {
                 </Form>
               </div>
               <Footer
-              className="text-gray-500"
+                className="text-gray-500"
                 style={{
                   textAlign: "center",
                 }}

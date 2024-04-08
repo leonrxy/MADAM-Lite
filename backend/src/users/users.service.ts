@@ -54,8 +54,11 @@ export class UsersService {
     }
 
     try {
-      Object.assign(user, updateUserDto);
-
+      const { password, ...userData } = updateUserDto;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const updateUser = { ...userData, password: hashedPassword };
+      Object.assign(user, updateUser);
+      console.log(user)
       const updatedUser = await this.userRepository.save(user);
       return {
         status: "success",

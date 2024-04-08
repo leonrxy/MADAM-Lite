@@ -9,29 +9,33 @@ const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
 const DashboardLayout = ({ children }) => {
+  const userData = JSON.parse(sessionStorage.getItem("userData"));
   const [collapsed, setCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState(null);
-  const [activeSubMenu, setActiveSubMenu] = useState(null);
+  const [activeMenu, setActiveMenu] = useState("");
+  const [activeSubMenu, setActiveSubMenu] = useState("");
   const location = useLocation();
 
-  useEffect(() => {
-    const activeMenu = () => {
-      for (let j = 0; j < menuItems.length; j++) {
-        const menuItem = menuItems[j];
-        if (menuItem.children) {
-          const subMenuItem = menuItem.children.find(
-            (subItem) => subItem.link === location.pathname
-          );
-          
-          if (subMenuItem) {
-            setActiveSubMenu(subMenuItem.key);
-            return menuItem.key;
-          }
+  const getActiveMenu = () => {
+    for (let j = 0; j < menuItems.length; j++) {
+      const menuItem = menuItems[j];
+      if (menuItem.children) {
+        const subMenuItem = menuItem.children.find(
+          (subItem) => subItem.link === location.pathname
+        );
+        if (subMenuItem) {
+          setActiveSubMenu(subMenuItem.key);
+          setActiveMenu(menuItem.key);
+          return menuItem.key;
         }
+      } else if (menuItem.link === location.pathname) {
+        setActiveMenu(menuItem.key);
+        return menuItem.key;
       }
-    };
-    setActiveMenu(activeMenu() ? activeMenu() : null);
-    //console.log(activeMenu)
+    }
+  };
+
+  useEffect(() => {
+    setActiveMenu(getActiveMenu() ? getActiveMenu() : null);
   }, [location.pathname]);
 
   const toggleCollapsed = () => {
@@ -115,7 +119,7 @@ const DashboardLayout = ({ children }) => {
         </div>
         <Menu
           mode="inline"
-          defaultSelectedKeys={[activeMenu]}
+          defaultSelectedKeys={[activeMenu, activeSubMenu]}
           selectedKeys={[activeSubMenu, activeMenu]}
           items={menuItems}
         ></Menu>
@@ -159,9 +163,9 @@ const DashboardLayout = ({ children }) => {
                 <div className="flex items-center mr-1">
                   <FaUserCircle className="text-2xl mr-2" />
                 </div>
-                <div className="flex flex-col items-start mr-1">
-                  <Text style={{ fontSize: "14px" }}>John Doe</Text>
-                  <Text style={{ fontSize: "12px" }}>Superadmin</Text>
+                <div className="flex flex-col items-start mr-2">
+                  <Text style={{ fontSize: "14px" }}>{userData?.name}</Text>
+                  <Text style={{ fontSize: "12px" }}>{userData?.role}</Text>
                 </div>
                 <FaAngleDown />
               </div>

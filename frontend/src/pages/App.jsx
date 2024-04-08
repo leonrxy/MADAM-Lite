@@ -5,7 +5,9 @@ import { ConfigProvider } from "antd";
 
 export default function App() {
   const navigateTo = useNavigate();
-  const isAuthenticated = !!sessionStorage.getItem("token"); // Cek apakah token tersedia di localStorage
+  const isAuthenticated = !!(
+    sessionStorage.getItem("token") && sessionStorage.getItem("userData")
+  );
   // Redirect otomatis jika token tersedia
   useEffect(() => {
     if (!isAuthenticated) {
@@ -19,18 +21,17 @@ export default function App() {
         theme={{
           token: {
             fontFamily: "Poppins, sans-serif",
-            colorPrimary: '#dc362e',
-            
+            colorPrimary: "#dc362e",
           },
-          components:{
-            Menu:{
+          components: {
+            Menu: {
               itemHeight: 60,
               colorBgTextActive: "#dc362e",
               colorIconHover: "#dc362e",
-              colorItemTextHover: "#dc362e",
-              itemSelectedColor: "#dc362e"
-            }
-          }
+              itemHoverColor: "#dc362e",
+              itemSelectedColor: "#dc362e",
+            },
+          },
         }}
       >
         <Routes />
