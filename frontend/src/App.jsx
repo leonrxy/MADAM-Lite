@@ -15,8 +15,6 @@ export default function App() {
       try {
         if (!isAuthenticated) {
           navigateTo("/login");
-        } else {
-          navigateTo("/dashboard");
         }
       } catch (error) {
         console.error("Error checking authentication:", error);

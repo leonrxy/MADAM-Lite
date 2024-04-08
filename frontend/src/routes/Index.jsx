@@ -12,13 +12,10 @@ function checkAuthorization(roleRequired, userRole) {
 }
 
 function ProtectedRoute({ requiredRole }) {
-  const isAuthenticated = !!sessionStorage.getItem("token");
   const userRole = JSON.parse(sessionStorage.getItem("userData")).role;
 
-  if (isAuthenticated && !checkAuthorization(requiredRole, userRole)) {
+  if (!checkAuthorization(requiredRole, userRole)) {
     return <Navigate to="/dashboard" />;
-  } else if (!isAuthenticated && !checkAuthorization(requiredRole, userRole)) {
-    return <Navigate to="/login" />;
   }
 
   return <Outlet />;
