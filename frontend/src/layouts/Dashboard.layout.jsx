@@ -22,16 +22,20 @@ const DashboardLayout = ({ children }) => {
         const subMenuItem = menuItem.children.find(
           (subItem) => subItem.link === location.pathname
         );
-        if (subMenuItem) {
-          setActiveSubMenu(subMenuItem.key);
-          setActiveMenu(menuItem.key);
-          return menuItem.key;
+        if (subMenuItem && subMenuItem.role.includes(userData.role)) {
+          setActiveSubMenu(subMenuItem);
+          setActiveMenu(menuItem);
+          return menuItem;
         }
-      } else if (menuItem.link === location.pathname) {
-        setActiveMenu(menuItem.key);
-        return menuItem.key;
+      } else if (
+        menuItem.link === location.pathname &&
+        menuItem.role.includes(userData.role)
+      ) {
+        setActiveMenu(menuItem);
+        return menuItem;
       }
     }
+    return null;
   };
 
   useEffect(() => {
@@ -119,9 +123,9 @@ const DashboardLayout = ({ children }) => {
         </div>
         <Menu
           mode="inline"
-          defaultSelectedKeys={[activeMenu, activeSubMenu]}
-          selectedKeys={[activeSubMenu, activeMenu]}
-          items={menuItems}
+          defaultSelectedKeys={[activeMenu?.key, activeSubMenu?.key]}
+          selectedKeys={[activeSubMenu?.key, activeMenu?.key]}
+          items={menuItems.filter((item) => item.role.includes(userData.role))}
         ></Menu>
       </Sider>
       <Layout className="site-layout">
@@ -137,22 +141,27 @@ const DashboardLayout = ({ children }) => {
             borderBottom: "1px solid #e8e8e8",
           }}
         >
-          <Button
-            type="link"
-            onClick={toggleCollapsed}
-            style={{
-              marginLeft: 16,
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            {collapsed ? (
-              <FaTimes className="text-xl text-gray-800 hover:text-black" />
-            ) : (
-              <FaBars className="text-xl text-gray-800 hover:text-black" />
-            )}
-          </Button>
+          <div className="space-between items-center flex">
+            <Button
+              type="link"
+              onClick={toggleCollapsed}
+              style={{
+                marginLeft: 16,
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {collapsed ? (
+                <FaTimes className="text-xl text-gray-800 hover:text-black" />
+              ) : (
+                <FaBars className="text-xl text-gray-800 hover:text-black" />
+              )}
+            </Button>
+            <Text className="text-2xl font-medium">
+              {activeSubMenu ? activeSubMenu?.text : activeMenu?.text}
+            </Text>
+          </div>
           <Button
             className="flex items-center mr-4 bg-gray-100 hover:bg-gray-400 p-6 rounded-xl focus:outline-none focus:shadow-outline"
             shape="round"

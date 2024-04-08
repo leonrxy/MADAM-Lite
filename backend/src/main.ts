@@ -10,8 +10,8 @@ async function bootstrap() {
 
   app.enableCors({
     origin: '*', 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, 
+    methods: '*',
+    // credentials: true, 
   });
 
   await app.listen(3000, '0.0.0.0');

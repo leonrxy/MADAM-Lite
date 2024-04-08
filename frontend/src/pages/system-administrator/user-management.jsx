@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "../../layouts/Dashboard.layout";
-import { Button, Layout, Typography, Table } from "antd";
+import { Button, Layout, Typography, Table, Input } from "antd";
+import { FiPlus } from "react-icons/fi";
+import API from "../../Api";
 
 const { Text } = Typography;
-
+const { Search } = Input;
 const { Content } = Layout;
 
 const UserManagement = () => {
@@ -15,6 +17,7 @@ const UserManagement = () => {
       pageSize: 6,
     },
   });
+  const [search, setSearch] = useState("");
 
   const columns = [
     {
@@ -24,6 +27,12 @@ const UserManagement = () => {
         (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
         index +
         1,
+      filteredValue: [search],
+      onFilter: (value, record) => {
+        return String(record.name)
+          .toLocaleLowerCase()
+          .includes(value.toLocaleLowerCase());
+      },
     },
     {
       title: <Text className="text-gray-500 font-normal">Name</Text>,
@@ -69,14 +78,8 @@ const UserManagement = () => {
 
   const fetchData = () => {
     setLoading(true);
-    fetch(`http://127.0.0.1:3000/api/users`, {
-      method: "GET", // Menambahkan metode HTTP GET
-      headers: {
-        "Content-Type": "application/json",
-        // Authorization: `Bearer ${yourAccessToken}`, // Menambahkan header Authorization dengan token bearer
-      },
-    })
-      .then((res) => res.json())
+    API.get("users")
+      .then((response) => response.data)
       .then((data) => {
         setData(data);
         setLoading(false);
@@ -87,7 +90,8 @@ const UserManagement = () => {
             total: data.length,
           },
         });
-      });
+      })
+      .catch((error) => error.response);
   };
 
   useEffect(() => {
@@ -109,8 +113,30 @@ const UserManagement = () => {
   return (
     <DashboardLayout>
       <Content className="p-6">
-        <Text className="text-2xl font-semibold">User</Text>
+        <Text className="text-2xl font-medium">User</Text>
+        <br />
+        <div className="flex items-center justify-between w-full h-auto">
+          <Search
+            placeholder="Search User"
+            className="mt-2 mb-2"
+            style={{
+              width: 250,
+            }}
+            onSearch={(value) => setSearch(value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
+          <Button
+            type="primary"
+            className=" rounded-xl focus:outline-none focus:shadow-outline items-center justify-center h-10 py-2 px-4 flex items-center"
+          >
+            <FiPlus className="mr-2" />
+            Add User
+          </Button>
+        </div>
         <Table
+          className="mt-3"
           columns={columns}
           rowKey={(record) => record.user_id}
           dataSource={data}

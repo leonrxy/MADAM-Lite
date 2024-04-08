@@ -1,19 +1,39 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Routes from "../routes/Index";
 import { useNavigate } from "react-router-dom";
 import { ConfigProvider } from "antd";
 
 export default function App() {
   const navigateTo = useNavigate();
+  const [checkedAuth, setCheckedAuth] = useState(false);
   const isAuthenticated = !!(
     sessionStorage.getItem("token") && sessionStorage.getItem("userData")
   );
   // Redirect otomatis jika token tersedia
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigateTo("/login");
+    const checkAuthentication = async () => {
+      try {
+        if (!isAuthenticated) {
+          navigateTo("/login");
+        } else {
+          navigateTo("/dashboard");
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        navigateTo("/login");
+      } finally {
+        setCheckedAuth(true);
+      }
+    };
+
+    if (!checkedAuth) {
+      checkAuthentication();
     }
   }, [navigateTo, isAuthenticated]);
+
+  if (!checkedAuth) {
+    return;
+  }
 
   return (
     <>

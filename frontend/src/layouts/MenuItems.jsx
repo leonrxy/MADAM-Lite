@@ -4,7 +4,7 @@ import FolderIcon from "../assets/Folder.svg";
 import SettingIcon from "../assets/Setting.svg";
 import { Link } from "react-router-dom";
 
-function getItem(text, label, key, link, icon, children) {
+function getItem(text, label, key, link, icon, role, children) {
   return {
     key,
     link,
@@ -12,6 +12,7 @@ function getItem(text, label, key, link, icon, children) {
     children,
     label,
     text,
+    role,
   };
 }
 
@@ -21,7 +22,8 @@ const menuItems = [
     <Link to="/dashboard">Dashboard</Link>,
     "dashboard",
     "/dashboard",
-    <img src={CategoryIcon} alt="Category" className="menu-icon" />
+    <img src={CategoryIcon} alt="Category" className="menu-icon" />,
+    ["user","superadmin"]
   ),
   getItem(
     "Master Data",
@@ -29,18 +31,23 @@ const menuItems = [
     "master-data",
     "/master-data",
     <img src={FolderIcon} alt="Category" className="menu-icon" />,
+    ["superadmin"],
     [
       getItem(
         "Demograph",
         <Link to="/demograph">Demograph</Link>,
         "demograph",
-        "/demograph"
+        "/demograph",
+        null,
+        ["superadmin"],
       ),
       getItem(
         "Psychograph",
         <Link to="/psychograph">Psychograph</Link>,
         "psychograph",
-        "/psychograph"
+        "/psychograph",
+        null,
+        ["superadmin"],
       ),
     ]
   ),
@@ -50,18 +57,23 @@ const menuItems = [
     "data-analysis",
     "/data-analysis",
     <img src={ChartIcon} alt="Category" className="menu-icon" />,
+    ["user","superadmin"],
     [
       getItem(
         "AIO Analysis",
         <Link to="/aio-analysis">AIO Analysis</Link>,
         "aio-analysis",
-        "/aio-analysis"
+        "/aio-analysis",
+        null,
+        ["user","superadmin"],
       ),
       getItem(
         "History",
         <Link to="/history">History</Link>,
         "history",
-        "/history"
+        "/history",
+        null,
+        ["user","superadmin"],
       ),
     ]
   ),
@@ -71,12 +83,15 @@ const menuItems = [
     "system-administrator",
     "/system-administrator",
     <img src={SettingIcon} alt="Category" className="menu-icon" />,
+    ["superadmin"],
     [
       getItem(
         "User Management",
         <Link to="/user-management">User Management</Link>,
         "user-management",
-        "/user-management"
+        "/user-management",
+        null,
+        ["superadmin"],
       ),
     ]
   ),

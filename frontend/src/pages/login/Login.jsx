@@ -3,41 +3,39 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/Logo.svg";
 import { Button, Checkbox, Form, Input, Layout } from "antd";
 import { Helmet } from "react-helmet";
+import API from "../../Api";
 
 const { Content, Footer } = Layout;
 
 const Login = () => {
-  const [loading, setLoading] = useState(false); // Ubah menjadi satu state saja untuk loading
+  const [loading, setLoading] = useState(false);
   const [errorMessageUsername, setErrorMessageUsername] = useState("");
   const [errorMessagePassword, setErrorMessagePassword] = useState("");
   const navigateTo = useNavigate();
 
   const handleLogin = async (values) => {
-    console.log("value" + values);
-    if (values.username == undefined && values.password == undefined) {
+    if (values.username === "" && values.password === "") {
+      setErrorMessageUsername("Please input your username!");
       setErrorMessagePassword("Please input your password!");
-      setErrorMessageUsername("Please input your username!");
       return;
-    } else if (values.username == undefined) {
+    } else if (values.username === "") {
       setErrorMessageUsername("Please input your username!");
+      setErrorMessagePassword("");
       return;
-    } else if (values.password == undefined) {
+    } else if (values.password === "") {
+      setErrorMessageUsername("");
       setErrorMessagePassword("Please input your password!");
       return;
     }
 
     try {
       setLoading(true);
-      const response = await fetch("http://127.0.0.1:3000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
-
-      if (response.ok) {
-        const { data } = await response.json();
+      const response = await API.post("auth/login", values)
+        .then((response) => response)
+        .catch((error) => error.response);
+      console.log(response);
+      if (response.status === 200) {
+        const { data } = response.data;
         const expiration = new Date();
         expiration.setDate(expiration.getDate() + 1);
         const tokenData = {
@@ -56,14 +54,12 @@ const Login = () => {
         sessionStorage.setItem("token", JSON.stringify(tokenData));
         sessionStorage.setItem("userData", JSON.stringify(userData));
         navigateTo("/dashboard");
-      } else {
-        if (response.status === 404) {
-          setErrorMessageUsername("Incorrect username");
-          setErrorMessagePassword("");
-        } else if (response.status === 401) {
-          setErrorMessagePassword("Incorrect password");
-          setErrorMessageUsername("");
-        }
+      } else if (response.status === 404) {
+        setErrorMessageUsername("Incorrect username");
+        setErrorMessagePassword("");
+      } else if (response.status === 401) {
+        setErrorMessagePassword("Incorrect password");
+        setErrorMessageUsername("");
       }
     } catch (error) {
       setLoading(false);
@@ -82,9 +78,9 @@ const Login = () => {
       <Layout>
         <Layout>
           <Content className="h-screen flex justify-center items-center">
-            <div className="w-full max-w-md">
-              <div className="bg-white shadow-md rounded-2xl px-8 pt-6 pb-8 mb-4">
-                <h3 className="text-center mb-4 flex items-center justify-center space-x-1">
+            <div className="w-full max-w-lg ">
+              <div className="bg-white shadow-md rounded-2xl px-14 pt-6 pb-4 mb-1">
+                <h3 className="text-center mb-5 flex items-center justify-center space-x-1">
                   <img src={Logo} alt="Logo" className="h-10" />
                 </h3>
                 <h2 className="text-3xl font-bold mb-4 text-left">Login</h2>
@@ -105,8 +101,8 @@ const Login = () => {
                   <Form.Item
                     label="Username"
                     name="username"
-                    validateStatus={errorMessageUsername ? "error" : ""} // Tentukan status validasi berdasarkan pesan kesalahan
-                    help={errorMessageUsername} // Tampilkan pesan kesalahan di bawah input field
+                    validateStatus={errorMessageUsername ? "error" : ""}
+                    help={errorMessageUsername}
                     validateTrigger={[]}
                   >
                     <Input placeholder="Enter your username" size="large" />
@@ -115,8 +111,8 @@ const Login = () => {
                   <Form.Item
                     label="Password"
                     name="password"
-                    validateStatus={errorMessagePassword ? "error" : ""} // Tentukan status validasi berdasarkan pesan kesalahan
-                    help={errorMessagePassword} // Tampilkan pesan kesalahan di bawah input field
+                    validateStatus={errorMessagePassword ? "error" : ""}
+                    help={errorMessagePassword}
                     validateTrigger={[]}
                   >
                     <Input.Password
@@ -125,8 +121,12 @@ const Login = () => {
                     />
                   </Form.Item>
 
-                  <Form.Item name="remember" valuePropName="checked">
-                    <Checkbox>Remember me</Checkbox>
+                  <Form.Item
+                    name="remember"
+                    valuePropName="checked"
+                    className="-mt-7"
+                  >
+                    <Checkbox>Remember Me</Checkbox>
                   </Form.Item>
 
                   <Form.Item>

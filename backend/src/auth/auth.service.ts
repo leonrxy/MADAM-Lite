@@ -17,13 +17,14 @@ export class AuthService {
         return user;
     }
 
-    async generateToken(user: any) {
+    async login(user: any) {
         const payload = { sub: user.user_id, username: user.username, role: user.role };
+        const token = await this.jwtService.signAsync(payload);
         return {
             success: true,
             message: 'Login Successful',
             data: {
-                token: await this.jwtService.signAsync(payload),
+                token: token,
                 user: {
                     user_id: user.user_id,
                     name: user.name,
