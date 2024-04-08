@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../../layouts/Dashboard.layout";
 import { Button, Layout, Typography, Table, Input } from "antd";
 import { FiPlus } from "react-icons/fi";
+import { Helmet } from "react-helmet";
 import API from "../../Api";
 
 const { Text } = Typography;
@@ -111,42 +112,50 @@ const UserManagement = () => {
     }
   };
   return (
-    <DashboardLayout>
-      <Content className="p-6">
-        <Text className="text-2xl font-medium">User</Text>
-        <br />
-        <div className="flex items-center justify-between w-full h-auto">
-          <Search
-            placeholder="Search User"
-            className="mt-2 mb-2"
-            style={{
-              width: 250,
-            }}
-            onSearch={(value) => setSearch(value)}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
+    <>
+      <Helmet>
+        <title>User Management - MADAM Lite</title>
+        <meta name="description" content="MADAM Lite" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/star.svg" />
+      </Helmet>
+      <DashboardLayout>
+        <Content className="p-6">
+          <Text className="text-2xl font-medium">User</Text>
+          <br />
+          <div className="flex items-center justify-between w-full h-auto">
+            <Search
+              placeholder="Search User"
+              className="mt-2 mb-2"
+              style={{
+                width: 250,
+              }}
+              onSearch={(value) => setSearch(value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+            />
+            <Button
+              type="primary"
+              className=" rounded-xl focus:outline-none focus:shadow-outline items-center justify-center h-10 py-2 px-4 flex items-center"
+            >
+              <FiPlus className="mr-2" />
+              Add User
+            </Button>
+          </div>
+          <Table
+            className="mt-3"
+            columns={columns}
+            rowKey={(record) => record.user_id}
+            dataSource={data}
+            pagination={tableParams.pagination}
+            loading={loading}
+            onChange={handleTableChange}
+            size="middle"
           />
-          <Button
-            type="primary"
-            className=" rounded-xl focus:outline-none focus:shadow-outline items-center justify-center h-10 py-2 px-4 flex items-center"
-          >
-            <FiPlus className="mr-2" />
-            Add User
-          </Button>
-        </div>
-        <Table
-          className="mt-3"
-          columns={columns}
-          rowKey={(record) => record.user_id}
-          dataSource={data}
-          pagination={tableParams.pagination}
-          loading={loading}
-          onChange={handleTableChange}
-          size="middle"
-        />
-      </Content>
-    </DashboardLayout>
+        </Content>
+      </DashboardLayout>
+    </>
   );
 };
 
