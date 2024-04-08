@@ -3,7 +3,7 @@ import DashboardLayout from "../../layouts/Dashboard.layout";
 import { Button, Layout, Typography, Table, Input } from "antd";
 import { FiPlus } from "react-icons/fi";
 import { Helmet } from "react-helmet";
-import API from "../../Api";
+import http from "../../utils/http";
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -79,8 +79,8 @@ const UserManagement = () => {
 
   const fetchData = () => {
     setLoading(true);
-    API.get("users")
-      .then((response) => response.data)
+    http
+      .get("users")
       .then((data) => {
         setData(data);
         setLoading(false);
@@ -98,6 +98,8 @@ const UserManagement = () => {
   useEffect(() => {
     fetchData();
   }, [JSON.stringify(tableParams)]);
+
+  console.log("Table Params:", tableParams);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setTableParams({
