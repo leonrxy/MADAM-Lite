@@ -10,6 +10,7 @@ const AddUser = ({ open, setOpen }) => {
         onOk={() => setOpen(false)}
         onCancel={() => setOpen(false)}
         width={400}
+        maskClosable={false}
       >
         <p>some contents...</p>
         <p>some contents...</p>

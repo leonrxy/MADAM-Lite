@@ -82,9 +82,9 @@ const Login = () => {
       </Helmet>
       <Layout>
         <Layout>
-          <Content className="h-screen flex justify-center items-center">
-            <div className="w-full max-w-lg ">
-              <div className="bg-white shadow-md rounded-2xl px-14 pt-6 pb-4 mb-1">
+          <Content className="h-dvh md:h-screen flex justify-center items-center">
+            <div className="w-full max-w-lg">
+              <div className="bg-white shadow-md rounded-2xl px-5 lg:px-14 pt-6 pb-4 mb-1 ">
                 <h3 className="text-center mb-5 flex items-center justify-center space-x-1">
                   <img src={Logo} alt="Logo" className="h-10" />
                 </h3>
@@ -100,7 +100,7 @@ const Login = () => {
                     remember: false,
                   }}
                   onFinish={handleLogin}
-                  autoComplete="off"
+                  autoComplete="on"
                   layout="vertical"
                 >
                   <Form.Item
