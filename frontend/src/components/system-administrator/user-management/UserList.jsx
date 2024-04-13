@@ -178,6 +178,7 @@ const UserList = () => {
           open={openDetailUser}
           setOpen={setOpenDetailUser}
           userData={selectedUser}
+          fetchData={fetchData}
         />
         <DeleteUser
           open={openDeleteUser}

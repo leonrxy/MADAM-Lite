@@ -1,17 +1,18 @@
 import { Button, Descriptions, Modal } from "antd";
 import InfoIcon from "../../../assets/Info.svg";
+import EditUser from "./EditUser";
+import { useState } from "react";
 
-const DetailUser = ({ open, setOpen, userData }) => {
+const DetailUser = ({ open, setOpen, userData, fetchData }) => {
+  const [openEditUser, setOpenEditUser] = useState(false);
   const handleClose = () => {
     setOpen(false); // Tutup modal DetailUser
   };
 
   const handleEdit = () => {
     // Fungsi untuk menangani klik tombol Edit Data
-    if (userData) {
-      console.log("Edit data:", userData);
-      // Implementasi logika untuk membuka modal pengeditan atau menuju halaman pengeditan data pengguna
-    }
+    setOpen(false); // Tutup modal DetailUser
+    setOpenEditUser(true); // Buka modal EditUser
   };
 
   const formatUpdatedAt = (updatedAt) => {
@@ -69,41 +70,46 @@ const DetailUser = ({ open, setOpen, userData }) => {
   ];
 
   return (
-    <Modal
-      title={
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <img
-            src={InfoIcon}
-            alt="Plus"
-            className="menu-icon"
-            style={{ marginRight: 10, height: 40, width: 40 }}
-          />
-          <span>Detail User</span>
-        </div>
-      }
-      centered
-      visible={open}
-      onCancel={handleClose}
-      footer={[
-        <>
-          <div className="mt-7" style={{ textAlign: "center" }}>
-            <Button className="mr-3" key="edit" onClick={handleEdit}>
-              Edit Data
-            </Button>
-            <Button key="back" type="primary" onClick={handleClose}>
-              Back
-            </Button>
+    <>
+      <Modal
+        title={
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img
+              src={InfoIcon}
+              alt="Plus"
+              className="menu-icon"
+              style={{ marginRight: 10, height: 40, width: 40 }}
+            />
+            <span>Detail User</span>
           </div>
-        </>,
-      ]}
-    >
-      {/* Garis horizontal di bawah ikon dan teks */}
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
-        <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
-      </div>
-      {/* Tampilkan detail pengguna jika userData tidak null */}
-      {userData && <Descriptions bordered items={items} size="middle" />}
-    </Modal>
+        }
+        centered
+        visible={open}
+        onCancel={handleClose}
+        footer={[
+          <>
+            <div className="mt-7" style={{ textAlign: "center" }}>
+              <Button className="mr-3" key="edit" onClick={handleEdit}>
+                Edit Data
+              </Button>
+              <Button key="back" type="primary" onClick={handleClose}>
+                Back
+              </Button>
+            </div>
+          </>,
+        ]}
+      >
+        {/* Garis horizontal di bawah ikon dan teks */}
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
+        >
+          <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
+        </div>
+        {/* Tampilkan detail pengguna jika userData tidak null */}
+        {userData && <Descriptions bordered items={items} size="middle" />}
+      </Modal>
+      <EditUser open={openEditUser} setOpen={setOpenEditUser} userData={userData} fetchData={fetchData}/>
+    </>
   );
 };
 

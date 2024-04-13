@@ -13,7 +13,7 @@ export class UpdateUserDto {
     @IsEmail()
     email: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     @MinLength(6)
     password: string;
