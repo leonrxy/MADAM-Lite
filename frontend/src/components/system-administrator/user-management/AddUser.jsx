@@ -1,7 +1,8 @@
 import { Button, Form, Input, Modal } from "antd";
 import PlusIcon from "../../../assets/Plus.svg"; // Import gambar SVG PlusIcon
+import http from "../../../utils/http";
 
-const AddUser = ({ open, setOpen, onSave }) => {
+const AddUser = ({ open, setOpen }) => {
   const [form] = Form.useForm(); // Inisialisasi form
 
   const handleCancel = () => {
@@ -12,9 +13,11 @@ const AddUser = ({ open, setOpen, onSave }) => {
     form
       .validateFields()
       .then((values) => {
-        onSave(values); // Teruskan data yang divalidasi ke fungsi onSave
-        form.resetFields(); // Mengosongkan form setelah disimpan
-        setOpen(false); // Menutup modal
+        http.post("users", values).then((res) => {
+          console.log(res);
+          form.resetFields(); // Mengosongkan form setelah disimpan
+          setOpen(false); // Menutup modal setelah disimpan
+        });
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);

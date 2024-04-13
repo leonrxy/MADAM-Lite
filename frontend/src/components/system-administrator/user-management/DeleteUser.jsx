@@ -1,12 +1,15 @@
 import { Button, Modal, Typography } from "antd";
 import ConfirmDelete from "../../../assets/ConfirmDelete.svg";
+import http from "../../../utils/http";
 
 const { Text } = Typography;
 
 const DeleteUser = ({ open, setOpen, userData }) => {
-  const handleOk = () => {
-    console.log("Delete data:", userData);
-    setOpen(false);
+  const handleDelete = () => {
+    http.delete(`users/${userData.user_id}`).then((res) => {
+      console.log(res);
+      setOpen(false);
+    });
   };
   const handleCancel = () => {
     setOpen(false);
@@ -23,12 +26,12 @@ const DeleteUser = ({ open, setOpen, userData }) => {
         footer={
           <>
             <div className="flex justify-center">
-            <Button key="back" className="mr-3" onClick={handleCancel}>
-              No, cancel
-            </Button>
-            <Button key="submit" type="primary" onClick={handleOk}>
-              Yes, delete
-            </Button>
+              <Button key="back" className="mr-3" onClick={handleCancel}>
+                No, cancel
+              </Button>
+              <Button key="submit" type="primary" onClick={handleDelete}>
+                Yes, delete
+              </Button>
             </div>
           </>
         }
@@ -38,7 +41,7 @@ const DeleteUser = ({ open, setOpen, userData }) => {
         </div>
         <div className="flex justify-center mb-3">
           <Text className="text-xl font-semibold text-center">
-            Are you sure to delete user {"'"+userData?.name + "'?"}
+            Are you sure to delete user {"'" + userData?.name + "'?"}
           </Text>
         </div>
         <div className="flex justify-center mb-7">

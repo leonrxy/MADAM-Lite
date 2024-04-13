@@ -109,7 +109,7 @@ const UserList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [JSON.stringify(tableParams)]);
+  }, [JSON.stringify(tableParams), openDeleteUser, openAddUser]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setTableParams({
