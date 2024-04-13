@@ -14,36 +14,57 @@ const DetailUser = ({ open, setOpen, userData }) => {
     }
   };
 
+  const formatUpdatedAt = (updatedAt) => {
+    const date = new Date(updatedAt);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const seconds = date.getSeconds().toString().padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
   const items = [
     {
       key: "1",
       label: "User ID",
       children: userData?.user_id,
       span: 3,
+      labelStyle: { background: "#F8F8F8" },
+      contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
     {
       key: "2",
       label: "Name",
       children: userData?.name,
       span: 3,
+      labelStyle: { background: "#ffffff" },
+      contentStyle: { background: "#ffffff", textAlign: "right" },
     },
     {
       key: "3",
       label: "Username",
       children: userData?.username,
       span: 3,
+      labelStyle: { background: "#F8F8F8" },
+      contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
     {
       key: "4",
       label: "Email",
       children: userData?.email,
       span: 3,
+      labelStyle: { background: "#ffffff" },
+      contentStyle: { background: "#ffffff", textAlign: "right" },
     },
     {
       key: "5",
       label: "Updated at",
-      children: userData?.updated_at,
+      children: formatUpdatedAt(userData?.updated_at),
       span: 3,
+      labelStyle: { background: "#F8F8F8" },
+      contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
   ];
 

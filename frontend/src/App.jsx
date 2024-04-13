@@ -49,6 +49,10 @@ export default function App() {
               itemHoverColor: "#dc362e",
               itemSelectedColor: "#dc362e",
             },
+            Table: {
+              cellPaddingBlock: 10,
+              
+            },
           },
         }}
       >

@@ -20,7 +20,7 @@ const UserList = () => {
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
-      pageSize: 6,
+      pageSize: 8,
     },
   });
 
@@ -66,6 +66,7 @@ const UserList = () => {
         }/${date.getFullYear()}`;
       },
       width: "20%",
+      defaultSortOrder: "descend",
     },
     {
       title: <Text className="text-gray-500 font-normal">Action</Text>,

@@ -1,14 +1,22 @@
 import { Button, Modal, Typography } from "antd";
+import { useState } from "react";
 import ConfirmDelete from "../../../assets/ConfirmDelete.svg";
 import http from "../../../utils/http";
+import StatusModal from "../../StatusModal";
 
 const { Text } = Typography;
 
 const DeleteUser = ({ open, setOpen, userData }) => {
+  const [openStatusModal, setOpenStatusModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalStatus, setModalStatus] = useState("");
   const handleDelete = () => {
     http.delete(`users/${userData.user_id}`).then((res) => {
-      console.log(res);
+      const { message, status } = res;
+      setModalMessage(message);
+      setModalStatus(status === "success" ? "success" : "failed");
       setOpen(false);
+      setOpenStatusModal(true);
     });
   };
   const handleCancel = () => {
@@ -50,6 +58,12 @@ const DeleteUser = ({ open, setOpen, userData }) => {
           </Text>
         </div>
       </Modal>
+      <StatusModal
+        open={openStatusModal}
+        setOpen={setOpenStatusModal}
+        message={modalMessage}
+        status={modalStatus}
+      />
     </>
   );
 };

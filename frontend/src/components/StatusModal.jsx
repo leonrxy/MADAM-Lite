@@ -1,12 +1,19 @@
 import { Button, Modal, Typography } from "antd";
-import Success from "../../../assets/Success.svg";
+import SuccessIcon from "../assets/Success.svg";
+import FailedIcon from "../assets/Failed.svg";
 
 const { Text } = Typography;
 
-const DeleteUser = ({ open, setOpen, message }) => {
+const StatusModal = ({ open, setOpen, status, message }) => {
   const handleOkay = () => {
     setOpen(false);
   };
+
+  // Tentukan ikon berdasarkan status
+  const icon = status === "success" ? SuccessIcon : FailedIcon;
+  // Tentukan teks berdasarkan status
+  const text = status === "success" ? "Success!" : "Failed!";
+
   return (
     <>
       <Modal
@@ -14,7 +21,7 @@ const DeleteUser = ({ open, setOpen, message }) => {
         open={open}
         onOk={() => setOpen(false)}
         onCancel={() => setOpen(false)}
-        width={400}
+        width={350}
         maskClosable={false}
         footer={
           <>
@@ -27,10 +34,12 @@ const DeleteUser = ({ open, setOpen, message }) => {
         }
       >
         <div className="flex justify-center mb-3">
-          <img src={Success} alt="Confirm Delete" />
+          {/* Tampilkan ikon berdasarkan status */}
+          <img src={icon} alt={status === "success" ? "Success" : "Failed"} />
         </div>
         <div className="flex justify-center mb-3">
-          <Text className="text-xl font-semibold text-center">Success!</Text>
+          {/* Tampilkan teks berdasarkan status */}
+          <Text className="text-xl font-semibold text-center">{text}</Text>
         </div>
         <div className="flex justify-center mb-7">
           <Text className="text-gray-400 text-base">{message}</Text>
@@ -40,4 +49,4 @@ const DeleteUser = ({ open, setOpen, message }) => {
   );
 };
 
-export default DeleteUser;
+export default StatusModal;

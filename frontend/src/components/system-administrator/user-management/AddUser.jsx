@@ -1,8 +1,13 @@
 import { Button, Form, Input, Modal } from "antd";
 import PlusIcon from "../../../assets/Plus.svg"; // Import gambar SVG PlusIcon
+import { useState } from "react";
 import http from "../../../utils/http";
+import StatusModal from "../../StatusModal";
 
 const AddUser = ({ open, setOpen }) => {
+  const [openStatusModal, setOpenStatusModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalStatus, setModalStatus] = useState("");
   const [form] = Form.useForm(); // Inisialisasi form
 
   const handleCancel = () => {
@@ -14,9 +19,12 @@ const AddUser = ({ open, setOpen }) => {
       .validateFields()
       .then((values) => {
         http.post("users", values).then((res) => {
-          console.log(res);
+          const { message, status } = res;
+          setModalMessage(message);
+          setModalStatus(status === "success" ? "success" : "failed");
           form.resetFields(); // Mengosongkan form setelah disimpan
           setOpen(false); // Menutup modal setelah disimpan
+          setOpenStatusModal(true); // Membuka modal status
         });
       })
       .catch((errorInfo) => {
@@ -112,6 +120,12 @@ const AddUser = ({ open, setOpen }) => {
           </div>
         </Form>
       </Modal>
+      <StatusModal
+        open={openStatusModal}
+        setOpen={setOpenStatusModal}
+        message={modalMessage}
+        status={modalStatus}
+      />
     </>
   );
 };
