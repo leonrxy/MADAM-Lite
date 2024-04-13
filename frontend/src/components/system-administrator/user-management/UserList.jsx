@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Button, Layout, Typography, Table, Input } from "antd";
+import { Button, Input, Layout, Table, Typography } from "antd";
+import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
-import http from "../utils/http";
-import DetailUser from "./DetailUser";
+import http from "../../../utils/http";
 import AddUser from "./AddUser";
 import DeleteUser from "./DeleteUser";
+import DetailUser from "./DetailUser";
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -16,20 +16,20 @@ const UserList = () => {
   const [openDetailUser, setOpenDetailUser] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openAddUser, setOpenAddUser] = useState(false);
-  const [openDeleteUser, setOpenDeleteUser] = useState(false); // Tambahkan state untuk DeleteUser
+  const [openDeleteUser, setOpenDeleteUser] = useState(false);
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
       pageSize: 6,
     },
   });
-  
+
   const [search, setSearch] = useState("");
 
   const columns = [
     {
       title: <Text className="text-gray-500 font-normal">No</Text>,
-      width: "5%",
+      width: "7%",
       render: (text, record, index) =>
         (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
         index +
@@ -81,7 +81,7 @@ const UserList = () => {
           >
             Detail
           </Button>
-          <Button type="primary" onClick={handleDeleteUser}>
+          <Button type="primary" onClick={() => handleDeleteUser(record)}>
             Delete
           </Button>
         </>
@@ -129,11 +129,10 @@ const UserList = () => {
     setOpenDetailUser(true);
   };
 
-  const handleDeleteUser = () => {
-    setOpenDetailUser(false);
-    setOpenDeleteUser(true); 
+  const handleDeleteUser = (record) => {
+    setSelectedUser(record);
+    setOpenDeleteUser(true);
   };
-  
 
   return (
     <>
@@ -164,14 +163,14 @@ const UserList = () => {
         <Table
           className="mt-3"
           columns={columns}
-          rowKey={(record) => record.id} 
+          rowKey={(record) => record.id}
           dataSource={data}
           pagination={tableParams.pagination}
           loading={loading}
           onChange={handleTableChange}
-          size="middle"
+          // size="middle"
           onRow={(record) => ({
-            onClick: () => handleDetail(record),
+            onClick: () => setSelectedUser(record),
           })}
         />
         <DetailUser
@@ -182,8 +181,8 @@ const UserList = () => {
         <DeleteUser
           open={openDeleteUser}
           setOpen={setOpenDeleteUser}
-          userData={selectedUser} 
-          fetchData={fetchData} 
+          userData={selectedUser}
+          fetchData={fetchData}
         />
         <AddUser open={openAddUser} setOpen={setOpenAddUser} />
       </Content>

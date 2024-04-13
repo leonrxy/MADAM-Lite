@@ -1,6 +1,5 @@
-import { Modal, Form, Input, Button } from "antd";
-import { useState } from "react";
-import PlusIcon from "../assets/Plus.svg"; // Import gambar SVG PlusIcon
+import { Button, Form, Input, Modal } from "antd";
+import PlusIcon from "../../../assets/Plus.svg"; // Import gambar SVG PlusIcon
 
 const AddUser = ({ open, setOpen, onSave }) => {
   const [form] = Form.useForm(); // Inisialisasi form
@@ -27,7 +26,12 @@ const AddUser = ({ open, setOpen, onSave }) => {
       <Modal
         title={
           <div style={{ display: "flex", alignItems: "center" }}>
-            <img src={PlusIcon} alt="Plus" className="menu-icon" style={{ marginRight: 8 }} />
+            <img
+              src={PlusIcon}
+              alt="Plus"
+              className="menu-icon"
+              style={{ marginRight: 10, height: 40, width: 40 }}
+            />
             <span>Add User</span>
           </div>
         }
@@ -40,53 +44,62 @@ const AddUser = ({ open, setOpen, onSave }) => {
         footer={null} // Menghilangkan footer bawaan (OK dan Cancel) dari modal
       >
         {/* Garis horizontal di bawah ikon dan teks */}
-        <div style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
+        >
           <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
         </div>
 
         {/* Form untuk memasukkan data pengguna */}
-        <Form form={form} layout="vertical">
+        <Form form={form} layout="vertical" requiredMark={false}>
           {/* Field Name */}
           <Form.Item
             name="name"
             label="Name"
+            style={{ marginBottom: 10 }}
             rules={[{ required: true, message: "Please enter name" }]}
           >
-            <Input placeholder="Enter Name" />
+            <Input style={{ height: 40 }} placeholder="Enter Name" />
           </Form.Item>
 
           {/* Field Username */}
           <Form.Item
             name="username"
             label="Username"
+            style={{ marginBottom: 10 }}
             rules={[{ required: true, message: "Please enter username" }]}
           >
-            <Input placeholder="Enter Username" />
+            <Input style={{ height: 40 }} placeholder="Enter Username" />
           </Form.Item>
 
           {/* Field Email */}
           <Form.Item
             name="email"
             label="Email"
+            style={{ marginBottom: 10 }}
             rules={[
               { required: true, message: "Please enter email" },
               { type: "email", message: "Please enter a valid email" },
             ]}
           >
-            <Input placeholder="Enter Email" />
+            <Input style={{ height: 40 }} placeholder="Enter Email" />
           </Form.Item>
 
           {/* Field Password */}
           <Form.Item
             name="password"
             label="Password"
+            style={{ marginBottom: 10 }}
             rules={[{ required: true, message: "Please enter password" }]}
           >
-            <Input.Password placeholder="Enter Password" />
+            <Input.Password
+              style={{ height: 40 }}
+              placeholder="Enter Password"
+            />
           </Form.Item>
 
           {/* Tombol untuk membatalkan atau menyimpan data */}
-          <div style={{ textAlign: "center" }}>
+          <div className="mt-7" style={{ textAlign: "center" }}>
             <Button onClick={handleCancel} style={{ marginRight: 8 }}>
               Cancel
             </Button>

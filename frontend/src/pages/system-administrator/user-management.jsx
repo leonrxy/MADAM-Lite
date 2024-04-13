@@ -1,6 +1,6 @@
 import DashboardLayout from "../../layouts/Dashboard.layout";
 import { Helmet } from "react-helmet";
-import UserList from "../../components/UserList";
+import UserList from "../../components/system-administrator/user-management/UserList";
 
 const UserManagement = () => {
   return (
