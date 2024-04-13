@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Layout, Typography, Table, Input } from "antd";
 import { FiPlus } from "react-icons/fi";
 import http from "../utils/http";
@@ -11,17 +11,19 @@ const { Search } = Input;
 const { Content } = Layout;
 
 const UserList = () => {
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openDetailUser, setOpenDetailUser] = useState(false);
-  const [openDeleteUser, setOpenDeleteUser] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [openAddUser, setOpenAddUser] = useState(false);
+  const [openDeleteUser, setOpenDeleteUser] = useState(false); // Tambahkan state untuk DeleteUser
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
       pageSize: 6,
     },
   });
+  
   const [search, setSearch] = useState("");
 
   const columns = [
@@ -70,16 +72,16 @@ const UserList = () => {
       dataIndex: "",
       key: "x",
       width: "20%",
-      render: () => (
+      render: (text, record) => (
         <>
           <Button
             type="primary"
             className="bg-amber-400 hover:bg-amber-600 mr-1"
-            onClick={() => setOpenDetailUser(true)}
+            onClick={() => handleDetail(record)}
           >
             Detail
           </Button>
-          <Button type="primary" onClick={() => setOpenDeleteUser(true)}>
+          <Button type="primary" onClick={handleDeleteUser}>
             Delete
           </Button>
         </>
@@ -109,8 +111,6 @@ const UserList = () => {
     fetchData();
   }, [JSON.stringify(tableParams)]);
 
-  console.log("Table Params:", tableParams);
-
   const handleTableChange = (pagination, filters, sorter) => {
     setTableParams({
       pagination,
@@ -119,15 +119,26 @@ const UserList = () => {
       sortOrder: sorter.order,
     });
 
-    // `dataSource` is useless since `pageSize` changed
     if (pagination.pageSize !== tableParams.pagination?.pageSize) {
       setData([]);
     }
   };
+
+  const handleDetail = (record) => {
+    setSelectedUser(record);
+    setOpenDetailUser(true);
+  };
+
+  const handleDeleteUser = () => {
+    setOpenDetailUser(false);
+    setOpenDeleteUser(true); 
+  };
+  
+
   return (
     <>
       <Content className="p-6">
-        <Text className="text-2xl font-medium">User</Text>
+        <Text className="text-2xl font-normal">User</Text>
         <br />
         <div className="flex items-center justify-between w-full h-auto">
           <Search
@@ -143,7 +154,7 @@ const UserList = () => {
           />
           <Button
             type="primary"
-            className=" rounded-xl focus:outline-none focus:shadow-outline items-center justify-center h-10 py-2 px-4 flex items-center"
+            className="rounded-xl focus:outline-none focus:shadow-outline items-center justify-center h-10 py-2 px-4 flex items-center"
             onClick={() => setOpenAddUser(true)}
           >
             <FiPlus className="mr-2" />
@@ -153,15 +164,27 @@ const UserList = () => {
         <Table
           className="mt-3"
           columns={columns}
-          rowKey={(record) => record.user_id}
+          rowKey={(record) => record.id} 
           dataSource={data}
           pagination={tableParams.pagination}
           loading={loading}
           onChange={handleTableChange}
           size="middle"
+          onRow={(record) => ({
+            onClick: () => handleDetail(record),
+          })}
         />
-        <DetailUser open={openDetailUser} setOpen={setOpenDetailUser} />
-        <DeleteUser open={openDeleteUser} setOpen={setOpenDeleteUser} />
+        <DetailUser
+          open={openDetailUser}
+          setOpen={setOpenDetailUser}
+          userData={selectedUser}
+        />
+        <DeleteUser
+          open={openDeleteUser}
+          setOpen={setOpenDeleteUser}
+          userData={selectedUser} 
+          fetchData={fetchData} 
+        />
         <AddUser open={openAddUser} setOpen={setOpenAddUser} />
       </Content>
     </>
