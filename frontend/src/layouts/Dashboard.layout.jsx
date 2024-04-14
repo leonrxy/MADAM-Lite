@@ -48,6 +48,7 @@ const DashboardLayout = ({ children }) => {
 
   const onLogout = () => {
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userData");
     window.location.href = "/login";
   };
 

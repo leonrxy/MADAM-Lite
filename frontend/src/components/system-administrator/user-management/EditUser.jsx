@@ -21,7 +21,7 @@ const EditUser = ({ open, setOpen, userData, fetchData }) => {
         if (!values.password) {
           delete values.password;
         }
-        http.patch(`users/${userData.user_id}`, values).then((res) => {
+        http.patch(`/users/${userData.user_id}`, values).then((res) => {
           const { message, status } = res;
           setModalMessage(message);
           setModalStatus(status === "success" ? "success" : "failed");
@@ -65,7 +65,7 @@ const EditUser = ({ open, setOpen, userData, fetchData }) => {
           </div>
         }
         centered
-        visible={open}
+        open={open}
         onCancel={handleCancel}
         width={400}
         maskClosable={false}

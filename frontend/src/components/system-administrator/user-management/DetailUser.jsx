@@ -28,7 +28,7 @@ const DetailUser = ({ open, setOpen, userData, fetchData }) => {
 
   const items = [
     {
-      key: "1",
+      key: "user_id",
       label: "User ID",
       children: userData?.user_id,
       span: 3,
@@ -36,7 +36,7 @@ const DetailUser = ({ open, setOpen, userData, fetchData }) => {
       contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
     {
-      key: "2",
+      key: "name",
       label: "Name",
       children: userData?.name,
       span: 3,
@@ -44,7 +44,7 @@ const DetailUser = ({ open, setOpen, userData, fetchData }) => {
       contentStyle: { background: "#ffffff", textAlign: "right" },
     },
     {
-      key: "3",
+      key: "username",
       label: "Username",
       children: userData?.username,
       span: 3,
@@ -52,7 +52,7 @@ const DetailUser = ({ open, setOpen, userData, fetchData }) => {
       contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
     {
-      key: "4",
+      key: "email",
       label: "Email",
       children: userData?.email,
       span: 3,
@@ -60,7 +60,7 @@ const DetailUser = ({ open, setOpen, userData, fetchData }) => {
       contentStyle: { background: "#ffffff", textAlign: "right" },
     },
     {
-      key: "5",
+      key: "updated_at",
       label: "Updated at",
       children: formatUpdatedAt(userData?.updated_at),
       span: 3,
@@ -84,20 +84,18 @@ const DetailUser = ({ open, setOpen, userData, fetchData }) => {
           </div>
         }
         centered={true}
-        visible={open}
+        open={open}
         onCancel={handleClose}
-        footer={[
-          <>
-            <div className="mt-7" style={{ textAlign: "center" }}>
-              <Button className="mr-3" key="edit" onClick={handleEdit}>
-                Edit Data
-              </Button>
-              <Button key="back" type="primary" onClick={handleClose}>
-                Back
-              </Button>
-            </div>
-          </>,
-        ]}
+        footer={
+          <div className="mt-7" style={{ textAlign: "center" }}>
+            <Button className="mr-3" onClick={handleEdit}>
+              Edit Data
+            </Button>
+            <Button type="primary" onClick={handleClose}>
+              Back
+            </Button>
+          </div>
+        }
       >
         {/* Garis horizontal di bawah ikon dan teks */}
         <div
@@ -108,7 +106,12 @@ const DetailUser = ({ open, setOpen, userData, fetchData }) => {
         {/* Tampilkan detail pengguna jika userData tidak null */}
         {userData && <Descriptions bordered items={items} size="middle" />}
       </Modal>
-      <EditUser open={openEditUser} setOpen={setOpenEditUser} userData={userData} fetchData={fetchData}/>
+      <EditUser
+        open={openEditUser}
+        setOpen={setOpenEditUser}
+        userData={userData}
+        fetchData={fetchData}
+      />
     </>
   );
 };
