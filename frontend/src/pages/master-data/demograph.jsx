@@ -1,8 +1,6 @@
 import DashboardLayout from "../../layouts/Dashboard.layout";
-import { Layout } from "antd";
 import { Helmet } from "react-helmet";
-
-const { Content } = Layout;
+import DemographList from "../../components/master-data/demograph/DemographList";
 
 const Demograph = () => {
   return (
@@ -14,7 +12,7 @@ const Demograph = () => {
         <link rel="icon" href="/star.svg" />
       </Helmet>
       <DashboardLayout>
-        <Content className="p-6">Demograph Content</Content>
+        <DemographList />
       </DashboardLayout>
     </>
   );
