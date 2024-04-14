@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/Logo.svg";
 import { Button, Checkbox, Form, Input, Layout } from "antd";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import http from "../../utils/http";
 
 const { Content, Footer } = Layout;
@@ -31,7 +31,7 @@ const Login = () => {
     try {
       setLoading(true);
       http
-        .post("auth/login", values)
+        .post("/auth/login", values)
         .then((response) => {
           const { data } = response;
           const expiration = new Date();
@@ -73,14 +73,14 @@ const Login = () => {
   };
 
   return (
-    <>
-      <Helmet>
-        <title>Login - MADAM Lite</title>
-        <meta name="description" content="MADAM Lite" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/star.svg" />
-      </Helmet>
+    <HelmetProvider>
       <Layout>
+        <Helmet>
+          <title>Login - MADAM Lite</title>
+          <meta name="description" content="MADAM Lite" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="icon" href="/star.svg" />
+        </Helmet>
         <Layout>
           <Content className="h-dvh md:h-screen flex justify-center items-center">
             <div className="w-full max-w-lg">
@@ -160,7 +160,7 @@ const Login = () => {
           </Content>
         </Layout>
       </Layout>
-    </>
+    </HelmetProvider>
   );
 };
 export default Login;

@@ -18,7 +18,7 @@ const AddUser = ({ open, setOpen }) => {
     form
       .validateFields()
       .then((values) => {
-        http.post("users", values).then((res) => {
+        http.post("/users", values).then((res) => {
           const { message, status } = res;
           setModalMessage(message);
           setModalStatus(status === "success" ? "success" : "failed");
@@ -47,7 +47,7 @@ const AddUser = ({ open, setOpen }) => {
           </div>
         }
         centered
-        visible={open}
+        open={open}
         onCancel={handleCancel}
         width={400}
         maskClosable={false}

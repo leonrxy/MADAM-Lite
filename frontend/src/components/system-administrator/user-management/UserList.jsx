@@ -29,6 +29,7 @@ const UserList = () => {
   const columns = [
     {
       title: <Text className="text-gray-500 font-normal">No</Text>,
+      key: "no",
       width: "7%",
       render: (text, record, index) =>
         (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
@@ -43,16 +44,19 @@ const UserList = () => {
     },
     {
       title: <Text className="text-gray-500 font-normal">Name</Text>,
+      key: "name",
       dataIndex: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: <Text className="text-gray-500 font-normal">Username</Text>,
+      key: "username",
       dataIndex: "username",
       sorter: (a, b) => a.username.localeCompare(b.username),
     },
     {
       title: <Text className="text-gray-500 font-normal">Updated at</Text>,
+      key: "updated_at",
       dataIndex: "updated_at",
       sorter: (a, b) => a.updated_at.localeCompare(b.updated_at),
       render: (text) => {
@@ -71,21 +75,26 @@ const UserList = () => {
     {
       title: <Text className="text-gray-500 font-normal">Action</Text>,
       dataIndex: "",
-      key: "x",
+      key: "action",
       width: "20%",
       render: (text, record) => (
-        <>
+        <div>
           <Button
             type="primary"
+            key={`detail-${record.id}`}
             className="bg-amber-400 hover:bg-amber-600 mr-1"
             onClick={() => handleDetail(record)}
           >
             Detail
           </Button>
-          <Button type="primary" onClick={() => handleDeleteUser(record)}>
+          <Button
+            type="primary"
+            key={`delete-${record.id}`}
+            onClick={() => handleDeleteUser(record)}
+          >
             Delete
           </Button>
-        </>
+        </div>
       ),
     },
   ];
@@ -93,7 +102,7 @@ const UserList = () => {
   const fetchData = () => {
     setLoading(true);
     http
-      .get("users")
+      .get("/users")
       .then((data) => {
         setData(data);
         setLoading(false);
@@ -164,12 +173,11 @@ const UserList = () => {
         <Table
           className="mt-3"
           columns={columns}
-          rowKey={(record) => record.id}
+          rowKey={(record) => record.user_id}
           dataSource={data}
           pagination={tableParams.pagination}
           loading={loading}
           onChange={handleTableChange}
-          // size="middle"
           onRow={(record) => ({
             onClick: () => setSelectedUser(record),
           })}

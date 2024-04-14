@@ -11,7 +11,7 @@ const DeleteUser = ({ open, setOpen, userData }) => {
   const [modalMessage, setModalMessage] = useState("");
   const [modalStatus, setModalStatus] = useState("");
   const handleDelete = () => {
-    http.delete(`users/${userData.user_id}`).then((res) => {
+    http.delete(`/users/${userData.user_id}`).then((res) => {
       const { message, status } = res;
       setModalMessage(message);
       setModalStatus(status === "success" ? "success" : "failed");
@@ -32,16 +32,14 @@ const DeleteUser = ({ open, setOpen, userData }) => {
         width={400}
         maskClosable={false}
         footer={
-          <>
-            <div className="flex justify-center">
-              <Button key="back" className="mr-3" onClick={handleCancel}>
-                No, cancel
-              </Button>
-              <Button key="submit" type="primary" onClick={handleDelete}>
-                Yes, delete
-              </Button>
-            </div>
-          </>
+          <div className="flex justify-center">
+            <Button className="mr-3" onClick={handleCancel}>
+              No, cancel
+            </Button>
+            <Button type="primary" onClick={handleDelete}>
+              Yes, delete
+            </Button>
+          </div>
         }
       >
         <div className="flex justify-center mb-3">
