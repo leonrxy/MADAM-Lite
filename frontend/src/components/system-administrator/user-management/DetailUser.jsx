@@ -83,7 +83,7 @@ const DetailUser = ({ open, setOpen, userData, fetchData }) => {
             <span>Detail User</span>
           </div>
         }
-        centered
+        centered={true}
         visible={open}
         onCancel={handleClose}
         footer={[

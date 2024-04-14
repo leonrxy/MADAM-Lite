@@ -14,15 +14,15 @@ const Login = () => {
   const navigateTo = useNavigate();
 
   const handleLogin = async (values) => {
-    if (values.username === "" && values.password === "") {
+    if (values.username === undefined && values.password === undefined) {
       setErrorMessageUsername("Please input your username!");
       setErrorMessagePassword("Please input your password!");
       return;
-    } else if (values.username === "") {
+    } else if (values.username === undefined) {
       setErrorMessageUsername("Please input your username!");
       setErrorMessagePassword("");
       return;
-    } else if (values.password === "") {
+    } else if (values.password === undefined) {
       setErrorMessageUsername("");
       setErrorMessagePassword("Please input your password!");
       return;
@@ -51,7 +51,7 @@ const Login = () => {
 
           sessionStorage.setItem("token", JSON.stringify(tokenData));
           sessionStorage.setItem("userData", JSON.stringify(userData));
-          navigateTo("/dashboard");
+          navigateTo("/dashboard?loginSuccess");
         })
         .catch((error) => {
           if (error.status === 404) {
