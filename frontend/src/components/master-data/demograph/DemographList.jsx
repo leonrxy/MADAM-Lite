@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import http from "../../../utils/http";
 import AddDemograph from "./AddDemograph";
-import DeleteUser from "../../system-administrator/user-management/DeleteUser";
-import DetailUser from "../../system-administrator/user-management/DetailUser";
+import DeleteDemograph from "./DeleteDemograph"
+import DetailDemograph from "./DetailDemograph";
+import EditDemograph from "./EditDemograph";
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -13,10 +14,10 @@ const { Content } = Layout;
 const DemographList = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [openDetailUser, setOpenDetailUser] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [openDetailDemograph, setOpenDetailDemograph] = useState(false);
+  const [selectedDemograph, setSelectedDemograph] = useState(null);
   const [openAddDemograph, setOpenAddDemograph] = useState(false);
-  const [openDeleteUser, setOpenDeleteUser] = useState(false);
+  const [openDeleteDemograph, setOpenDeleteDemograph] = useState(false);
   const [tableParams, setTableParams] = useState({
     pagination: {
       current: 1,
@@ -36,23 +37,24 @@ const DemographList = () => {
         1,
       filteredValue: [search],
       onFilter: (value, record) => {
-        return String(record.name)
+        return String(record.parametername)
           .toLocaleLowerCase()
           .includes(value.toLocaleLowerCase());
       },
     },
     {
-      title: <Text className="text-gray-500 font-normal">Name</Text>,
-      dataIndex: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      title: <Text className="text-gray-500 font-normal">Parameter Name</Text>,
+      dataIndex: "parameter_name",
+      sorter: (a, b) => a.parameter_name.localeCompare(b.parameter_name),
     },
     {
-      title: <Text className="text-gray-500 font-normal">Username</Text>,
-      dataIndex: "username",
-      sorter: (a, b) => a.username.localeCompare(b.username),
+      title: <Text className="text-gray-500 font-normal">Number of Options </Text>,
+      dataIndex: "option_value",
+      sorter: (a, b) => a.option_value.localeCompare(b.option_value),
+      render: (optionValue) => (optionValue ? optionValue.length : 0),
     },
     {
-      title: <Text className="text-gray-500 font-normal">Updated at</Text>,
+      title: <Text className="text-gray-500 font-normal">Last Update</Text>,
       dataIndex: "updated_at",
       sorter: (a, b) => a.updated_at.localeCompare(b.updated_at),
       render: (text) => {
@@ -82,7 +84,7 @@ const DemographList = () => {
           >
             Detail
           </Button>
-          <Button type="primary" onClick={() => handleDeleteUser(record)}>
+          <Button type="primary" onClick={() => handleDeleteDemograph(record)}>
             Delete
           </Button>
         </>
@@ -93,7 +95,7 @@ const DemographList = () => {
   const fetchData = () => {
     setLoading(true);
     http
-      .get("users")
+      .get("demograph")
       .then((data) => {
         setData(data);
         setLoading(false);
@@ -110,7 +112,7 @@ const DemographList = () => {
 
   useEffect(() => {
     fetchData();
-  }, [JSON.stringify(tableParams), openDeleteUser, openAddDemograph]);
+  }, [JSON.stringify(tableParams), openDeleteDemograph, openAddDemograph]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setTableParams({
@@ -126,23 +128,23 @@ const DemographList = () => {
   };
 
   const handleDetail = (record) => {
-    setSelectedUser(record);
-    setOpenDetailUser(true);
+    setSelectedDemograph(record);
+    setOpenDetailDemograph(true);
   };
 
-  const handleDeleteUser = (record) => {
-    setSelectedUser(record);
-    setOpenDeleteUser(true);
+  const handleDeleteDemograph = (record) => {
+    setSelectedDemograph(record);
+    setOpenDeleteDemograph(true);
   };
 
   return (
     <>
       <Content className="p-6">
-        <Text className="text-2xl font-normal">User</Text>
+        <Text className="text-2xl font-normal">Demograph</Text>
         <br />
         <div className="flex items-center justify-between w-full h-auto">
           <Search
-            placeholder="Search User"
+            placeholder="Search Demograph"
             className="mt-2 mb-2"
             style={{
               width: 250,
@@ -158,7 +160,7 @@ const DemographList = () => {
             onClick={() => setOpenAddDemograph(true)}
           >
             <FiPlus className="mr-2" />
-            Add User
+            Add Demograph
           </Button>
         </div>
         <Table
@@ -171,19 +173,19 @@ const DemographList = () => {
           onChange={handleTableChange}
           // size="middle"
           onRow={(record) => ({
-            onClick: () => setSelectedUser(record),
+            onClick: () => setSelectedDemograph(record),
           })}
         />
-        <DetailUser
-          open={openDetailUser}
-          setOpen={setOpenDetailUser}
-          userData={selectedUser}
+        <DetailDemograph
+          open={openDetailDemograph}
+          setOpen={setOpenDetailDemograph}
+          demographData={selectedDemograph}
           fetchData={fetchData}
         />
-        <DeleteUser
-          open={openDeleteUser}
-          setOpen={setOpenDeleteUser}
-          userData={selectedUser}
+        <DeleteDemograph
+          open={openDeleteDemograph}
+          setOpen={setOpenDeleteDemograph}
+          demographData={selectedDemograph}
           fetchData={fetchData}
         />
         <AddDemograph open={openAddDemograph} setOpen={setOpenAddDemograph} />

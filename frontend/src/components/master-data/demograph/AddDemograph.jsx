@@ -1,5 +1,5 @@
-import { Button, Form, Input, Modal } from "antd";
-import PlusIcon from "../../../assets/Plus.svg"; // Import gambar SVG PlusIcon
+import { Button, Form, Input, Modal, Space } from "antd";
+import PlusIcon from "../../../assets/Plus.svg";
 import { useState } from "react";
 import http from "../../../utils/http";
 import StatusModal from "../../StatusModal";
@@ -8,28 +8,46 @@ const AddDemograph = ({ open, setOpen }) => {
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalStatus, setModalStatus] = useState("");
-  const [form] = Form.useForm(); // Inisialisasi form
+  const [form] = Form.useForm();
+  const [options, setOptions] = useState([]);
 
   const handleCancel = () => {
-    setOpen(false); // Menutup modal saat tombol Cancel ditekan
+    setOpen(false);
   };
 
   const handleSave = () => {
     form
       .validateFields()
       .then((values) => {
-        http.post("users", values).then((res) => {
+        const requestData = {
+          ...values,
+          options: options.map((opt) => ({
+            optionValue: opt.optionValue,
+            customResultValue: opt.customResultValue,
+          })),
+        };
+        http.post("demograph", requestData).then((res) => {
           const { message, status } = res;
           setModalMessage(message);
           setModalStatus(status === "success" ? "success" : "failed");
-          form.resetFields(); // Mengosongkan form setelah disimpan
-          setOpen(false); // Menutup modal setelah disimpan
-          setOpenStatusModal(true); // Membuka modal status
+          form.resetFields();
+          setOpen(false);
+          setOpenStatusModal(true);
         });
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
       });
+  };
+
+  const handleAddOption = () => {
+    setOptions([...options, { optionValue: "", customResultValue: "" }]);
+  };
+
+  const handleRemoveOption = (index) => {
+    const updatedOptions = [...options];
+    updatedOptions.splice(index, 1);
+    setOptions(updatedOptions);
   };
 
   return (
@@ -49,21 +67,12 @@ const AddDemograph = ({ open, setOpen }) => {
         centered
         visible={open}
         onCancel={handleCancel}
-        width={400}
+        width={600}
         maskClosable={false}
-        destroyOnClose={true} // Hapus konten modal setelah ditutup
-        footer={null} // Menghilangkan footer bawaan (OK dan Cancel) dari modal
+        destroyOnClose={true}
+        footer={null}
       >
-        {/* Garis horizontal di bawah ikon dan teks */}
-        <div
-          style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
-        >
-          <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
-        </div>
-
-        {/* Form untuk memasukkan data pengguna */}
         <Form form={form} layout="vertical" requiredMark={false}>
-          {/* Field Name */}
           <Form.Item
             name="parametername"
             label="Parameter Name"
@@ -73,31 +82,83 @@ const AddDemograph = ({ open, setOpen }) => {
             <Input style={{ height: 40 }} placeholder="Enter Parameter Name" />
           </Form.Item>
 
-          {/* Field Email */}
           <Form.Item
             name="customresultparameter"
             label="Custom Result Parameter"
             style={{ marginBottom: 10 }}
-            rules={[{ required: true, message: "Please enter custom result parameter" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please enter Custom Result parameter",
+              },
+            ]}
           >
-            <Input style={{ height: 40 }} placeholder="Enter Custom Result Parameter" />
-          </Form.Item>
-
-          {/* Field Password */}
-          <Form.Item
-            name="password"
-            label="Password"
-            style={{ marginBottom: 10 }}
-            rules={[{ required: true, message: "Please enter password" }]}
-          >
-            <Input.Password
+            <Input
               style={{ height: 40 }}
-              placeholder="Enter Password"
+              placeholder="Please enter Custom Result Parameter"
             />
           </Form.Item>
 
-          {/* Tombol untuk membatalkan atau menyimpan data */}
-          <div className="mt-7" style={{ textAlign: "center" }}>
+          <Space
+            style={{ marginBottom: 10, justifyContent: "flex-end" }}
+            align="baseline"
+          >
+            <Form.Item
+              name="listoptionvalue"
+              label="List Option Value"
+              style={{ marginBottom: 0 }}
+            ></Form.Item>
+            <Button
+              type="primary"
+              onClick={handleAddOption}
+              style={{ color: "white", marginLeft: 310 }}
+            >
+              + Add Option
+            </Button>
+          </Space>
+
+          {options.map((option, index) => (
+            <Space key={index} style={{ display: "flex", marginBottom: 10 }}>
+              <Form.Item
+                name={`optionValue${index}`}
+                style={{ marginBottom: 0 }}
+                rules={[
+                  { required: true, message: "Please enter Option Value" },
+                ]}
+              >
+                <Input
+                  placeholder="Enter Option Value"
+                  value={option.optionValue}
+                  onChange={(e) =>
+                    handleOptionValueChange(e.target.value, index)
+                  }
+                />
+              </Form.Item>
+              <Form.Item
+                name={`customResultValue${index}`}
+                style={{ marginBottom: 0 }}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter Custom Result Value",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Enter Custom Result Value"
+                  value={option.customResultValue}
+                  onChange={(e) =>
+                    handleCustomResultValueChange(e.target.value, index)
+                  }
+                />
+              </Form.Item>
+              <Button type="danger" onClick={() => handleRemoveOption(index)}>
+                X
+              </Button>
+            </Space>
+          ))}
+
+          <div style={{ textAlign: "center" }}>
             <Button onClick={handleCancel} style={{ marginRight: 8 }}>
               Cancel
             </Button>

@@ -1,14 +1,15 @@
-import { Button, Form, Input, Modal } from "antd";
+import { Button, Form, Input, Modal, Space } from "antd";
 import EditIcon from "../../../assets/Edit.svg"; // Import gambar SVG PlusIcon
 import { useEffect, useState } from "react";
 import http from "../../../utils/http";
 import StatusModal from "../../StatusModal";
 
-const EditDemograph = ({ open, setOpen, userData, fetchData }) => {
+const EditDemograph = ({ open, setOpen, demographData, fetchData }) => {
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalStatus, setModalStatus] = useState("");
   const [form] = Form.useForm(); // Inisialisasi form
+  const [options, setOptions] = useState([]);
 
   const handleCancel = () => {
     setOpen(false); // Menutup modal saat tombol Cancel ditekan
@@ -21,29 +22,41 @@ const EditDemograph = ({ open, setOpen, userData, fetchData }) => {
         if (!values.password) {
           delete values.password;
         }
-        http.patch(`users/${userData.user_id}`, values).then((res) => {
-          const { message, status } = res;
-          setModalMessage(message);
-          setModalStatus(status === "success" ? "success" : "failed");
-          form.resetFields(); // Mengosongkan form setelah disimpan
-          setOpen(false); // Menutup modal setelah disimpan
-          setOpenStatusModal(true); // Membuka modal status
-        });
+        http
+          .patch(`demograph/${demographData.demograph_id}`, values)
+          .then((res) => {
+            const { message, status } = res;
+            setModalMessage(message);
+            setModalStatus(status === "success" ? "success" : "failed");
+            form.resetFields(); // Mengosongkan form setelah disimpan
+            setOpen(false); // Menutup modal setelah disimpan
+            setOpenStatusModal(true); // Membuka modal status
+          });
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
       });
   };
 
+  const handleAddOption = () => {
+    setOptions([...options, { optionValue: "", customResultValue: "" }]);
+  };
+
+  const handleRemoveOption = (index) => {
+    const updatedOptions = [...options];
+    updatedOptions.splice(index, 1);
+    setOptions(updatedOptions);
+  };
+
   useEffect(() => {
-    if (userData) {
+    if (demographData) {
       form.setFieldsValue({
-        name: userData.name,
-        username: userData.username,
-        email: userData.email,
+        parameter_name: demographData.parameter_name,
+        custom_result_option: demographData.result_value,
+        list_option_value: demographData.option_value,
       });
     }
-  }, [userData]);
+  }, [demographData]);
 
   useEffect(() => {
     if (open === false) {
@@ -61,7 +74,7 @@ const EditDemograph = ({ open, setOpen, userData, fetchData }) => {
               className="menu-icon"
               style={{ marginRight: 10, height: 40, width: 40 }}
             />
-            <span>Edit User</span>
+            <span>Edit Demograph</span>
           </div>
         }
         centered
@@ -83,49 +96,94 @@ const EditDemograph = ({ open, setOpen, userData, fetchData }) => {
         <Form form={form} layout="vertical" requiredMark={false}>
           {/* Field Name */}
           <Form.Item
-            name="name"
-            label="Name"
+            name="parameter_name"
+            label="Parameter Name"
             style={{ marginBottom: 10 }}
-            rules={[{ required: true, message: "Please enter name" }]}
+            rules={[{ required: true, message: "Please enter parameter name" }]}
           >
-            <Input style={{ height: 40 }} placeholder="Enter Name" />
+            <Input style={{ height: 40 }} placeholder="Enter Parameter Name" />
           </Form.Item>
 
           {/* Field Username */}
           <Form.Item
-            name="username"
-            label="Username"
-            style={{ marginBottom: 10 }}
-            rules={[{ required: true, message: "Please enter username" }]}
-          >
-            <Input style={{ height: 40 }} placeholder="Enter Username" />
-          </Form.Item>
-
-          {/* Field Email */}
-          <Form.Item
-            name="email"
-            label="Email"
+            name="custom_result_parameter"
+            label="Custom Result Parameter"
             style={{ marginBottom: 10 }}
             rules={[
-              { required: true, message: "Please enter email" },
-              { type: "email", message: "Please enter a valid email" },
+              {
+                required: true,
+                message: "Please enter custom result parameter",
+              },
             ]}
           >
-            <Input style={{ height: 40 }} placeholder="Enter Email" />
-          </Form.Item>
-
-          {/* Field Password */}
-          <Form.Item
-            name="password"
-            label="New Password"
-            style={{ marginBottom: 10 }}
-            rules={[{ required: false, message: "Please enter password" }]}
-          >
-            <Input.Password
+            <Input
               style={{ height: 40 }}
-              placeholder="Enter New Password"
+              placeholder="Enter Custom Result Parameter"
             />
           </Form.Item>
+
+          <Space
+            style={{
+              marginBottom: 10,
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+            align="baseline"
+          >
+            <Form.Item
+              name="listoptionvalue"
+              label="List Option Value"
+              style={{ marginBottom: 0, flex: 1 }}
+            ></Form.Item>
+            <Button
+              type="primary"
+              onClick={handleAddOption}
+              style={{ color: "white" }}
+            >
+              + Add Option
+            </Button>
+          </Space>
+
+          {options.map((option, index) => (
+            <Space key={index} style={{ display: "flex", marginBottom: 10 }}>
+              <Form.Item
+                name={`optionValue${index}`}
+                style={{ marginBottom: 0 }}
+                rules={[
+                  { required: true, message: "Please enter Option Value" },
+                ]}
+              >
+                <Input
+                  placeholder="Enter Option Value"
+                  value={option.optionValue}
+                  onChange={(e) =>
+                    handleOptionValueChange(e.target.value, index)
+                  }
+                />
+              </Form.Item>
+              <Form.Item
+                name={`customResultValue${index}`}
+                style={{ marginBottom: 0 }}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter Custom Result Value",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Enter Custom Result Value"
+                  value={option.customResultValue}
+                  onChange={(e) =>
+                    handleCustomResultValueChange(e.target.value, index)
+                  }
+                />
+              </Form.Item>
+              <Button type="danger" onClick={() => handleRemoveOption(index)}>
+                X
+              </Button>
+            </Space>
+          ))}
 
           {/* Tombol untuk membatalkan atau menyimpan data */}
           <div className="mt-7" style={{ textAlign: "center" }}>

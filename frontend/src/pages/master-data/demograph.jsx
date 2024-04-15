@@ -1,8 +1,6 @@
 import DashboardLayout from "../../layouts/Dashboard.layout";
-import { Layout } from "antd";
+import DemographList from "../../components/master-data/demograph/DemographList";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-
-const { Content } = Layout;
 
 const Demograph = () => {
   return (
@@ -14,7 +12,7 @@ const Demograph = () => {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/star.svg" />
         </Helmet>
-        <Content className="p-6">Demograph Content</Content>
+        <DemographList />
       </DashboardLayout>
     </HelmetProvider>
   );

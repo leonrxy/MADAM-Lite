@@ -6,12 +6,13 @@ import StatusModal from "../../StatusModal";
 
 const { Text } = Typography;
 
-const DeleteUser = ({ open, setOpen, userData }) => {
+const DeleteDemograph = ({ open, setOpen, demographData }) => {
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalStatus, setModalStatus] = useState("");
+
   const handleDelete = () => {
-    http.delete(`users/${userData.user_id}`).then((res) => {
+    http.delete(`demograph/${demographData.demograph_id}`).then((res) => {
       const { message, status } = res;
       setModalMessage(message);
       setModalStatus(status === "success" ? "success" : "failed");
@@ -49,12 +50,12 @@ const DeleteUser = ({ open, setOpen, userData }) => {
         </div>
         <div className="flex justify-center mb-3">
           <Text className="text-xl font-semibold text-center">
-            Are you sure to delete user {"'" + userData?.name + "'?"}
+          This item has been permanently removed. You can add it back later. {"'" + demographData?.parameter_name + "'?"}
           </Text>
         </div>
         <div className="flex justify-center mb-7">
           <Text className="text-gray-400 text-base">
-            This user has been permanently removed.
+          Demograph parameter has been successfully removed.
           </Text>
         </div>
       </Modal>
@@ -68,4 +69,4 @@ const DeleteUser = ({ open, setOpen, userData }) => {
   );
 };
 
-export default DeleteUser;
+export default DeleteDemograph;

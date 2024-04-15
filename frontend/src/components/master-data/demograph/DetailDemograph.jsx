@@ -1,18 +1,17 @@
 import { Button, Descriptions, Modal } from "antd";
 import InfoIcon from "../../../assets/Info.svg";
-import EditUser from "./EditUser";
+import EditDemograph from "./EditDemograph";
 import { useState } from "react";
 
-const DetailDemograph = ({ open, setOpen, userData, fetchData }) => {
-  const [openEditUser, setOpenEditUser] = useState(false);
+const DetailDemograph = ({ open, setOpen, demographData, fetchData }) => {
+  const [openEditDemograph, setOpenEditDemograph] = useState(false);
   const handleClose = () => {
-    setOpen(false); // Tutup modal DetailUser
+    setOpen(false); 
   };
 
   const handleEdit = () => {
-    // Fungsi untuk menangani klik tombol Edit Data
-    setOpen(false); // Tutup modal DetailUser
-    setOpenEditUser(true); // Buka modal EditUser
+    setOpen(false);
+    setOpenEditDemograph(true); 
   };
 
   const formatUpdatedAt = (updatedAt) => {
@@ -29,40 +28,32 @@ const DetailDemograph = ({ open, setOpen, userData, fetchData }) => {
   const items = [
     {
       key: "1",
-      label: "User ID",
-      children: userData?.user_id,
+      label: "Demograph ID",
+      children: demographData?.demograph_id,
       span: 3,
       labelStyle: { background: "#F8F8F8" },
       contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
     {
       key: "2",
-      label: "Name",
-      children: userData?.name,
+      label: "Parameter Name",
+      children: demographData?.parameter_name,
       span: 3,
       labelStyle: { background: "#ffffff" },
       contentStyle: { background: "#ffffff", textAlign: "right" },
     },
     {
       key: "3",
-      label: "Username",
-      children: userData?.username,
+      label: "Number of Options",
+      children: demographData?.option_value,
       span: 3,
       labelStyle: { background: "#F8F8F8" },
       contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
     {
       key: "4",
-      label: "Email",
-      children: userData?.email,
-      span: 3,
-      labelStyle: { background: "#ffffff" },
-      contentStyle: { background: "#ffffff", textAlign: "right" },
-    },
-    {
-      key: "5",
-      label: "Updated at",
-      children: formatUpdatedAt(userData?.updated_at),
+      label: "Last Update",
+      children: formatUpdatedAt(demographData?.updated_at),
       span: 3,
       labelStyle: { background: "#F8F8F8" },
       contentStyle: { background: "#F8F8F8", textAlign: "right" },
@@ -80,7 +71,7 @@ const DetailDemograph = ({ open, setOpen, userData, fetchData }) => {
               className="menu-icon"
               style={{ marginRight: 10, height: 40, width: 40 }}
             />
-            <span>Detail User</span>
+            <span>Detail Demograph</span>
           </div>
         }
         centered={true}
@@ -105,10 +96,9 @@ const DetailDemograph = ({ open, setOpen, userData, fetchData }) => {
         >
           <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
         </div>
-        {/* Tampilkan detail pengguna jika userData tidak null */}
-        {userData && <Descriptions bordered items={items} size="middle" />}
+        {demographData && <Descriptions bordered items={items} size="middle" />}
       </Modal>
-      <EditUser open={openEditUser} setOpen={setOpenEditUser} userData={userData} fetchData={fetchData}/>
+      <EditDemograph open={openEditDemograph} setOpen={setOpenEditDemograph} demographData={demographData} fetchData={fetchData}/>
     </>
   );
 };
