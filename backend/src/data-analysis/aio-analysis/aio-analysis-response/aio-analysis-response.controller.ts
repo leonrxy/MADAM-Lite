@@ -22,7 +22,7 @@ export class AioAnalysisResponseController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.aioAnalysisResponseService.findOne(+id);
+    return this.aioAnalysisResponseService.get(+id);
   }
 
   @Delete(':id')

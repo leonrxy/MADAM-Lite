@@ -1,6 +1,6 @@
-import { IsEnum, IsInt, IsNotEmpty, IsString } from "class-validator";
-import { OneToMany } from "typeorm";
-import { PsychographResponseData } from "../../psychograph-response-data/entities/psychograph-response-data.entity";
+import { IsEnum, IsInt, IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { CreatePsychographResponseDataDto } from "../../psychograph-response-data/dto/create-psychograph-response-data.dto";
+import { Type } from "class-transformer";
 
 export class CreatePsychographResponseDto {
     aio_analysis_response_id: number;
@@ -13,6 +13,7 @@ export class CreatePsychographResponseDto {
     @IsInt()
     total_option: number;
 
-    @OneToMany(() => PsychographResponseData, psychograph_response_data => psychograph_response_data.psychograph_response_id)
-    psychograph_response_data: PsychographResponseData[];
+    @ValidateNested()
+    @Type(() => CreatePsychographResponseDataDto)
+    psychograph_response_data: CreatePsychographResponseDto[];
 }

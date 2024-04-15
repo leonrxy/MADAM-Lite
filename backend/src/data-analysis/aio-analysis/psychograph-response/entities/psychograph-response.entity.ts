@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AioAnalysisResponse } from "../../aio-analysis-response/entities/aio-analysis-response.entity";
+import { PsychographResponseData } from "../../psychograph-response-data/entities/psychograph-response-data.entity";
 
 @Entity({ name: 'psychograph_response' })
 export class PsychographResponse {
@@ -15,4 +16,7 @@ export class PsychographResponse {
 
     @Column({type: 'int', nullable: false})
     total_option: number;
+
+    @OneToMany(() => PsychographResponseData, psychograph_response_data => psychograph_response_data.psychograph_response_id)
+    psychograph_response_data: PsychographResponseData[];
 }

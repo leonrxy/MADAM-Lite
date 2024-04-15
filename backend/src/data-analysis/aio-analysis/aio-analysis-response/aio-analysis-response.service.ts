@@ -138,6 +138,66 @@ export class AioAnalysisResponseService {
     }
   }
 
+  async get(aio_analysis_response_id: number) {
+    const aioAnalysisResponse = await this.aioRepository.findOne({
+      where: { aio_analysis_response_id },
+      relations: ['company_information_response', 'demograph_response', 'psychograph_response', 'user_id'],
+    });
+
+    if (!aioAnalysisResponse) {
+      // Jika entitas tidak ditemukan, lempar NotFound exception
+      throw new NotFoundException(`AioAnalysisResponse with id ${aio_analysis_response_id} not found`);
+    }
+
+    // Array to store all psychograph_response_data
+    let psychographResponseDataList: any[] = [];
+
+    // Loop through each psychograph_response
+    for (const psychographResponse of aioAnalysisResponse.psychograph_response) {
+      // Get the related psychograph_response_data for each psychograph_response
+      const psychographResponseData = await this.psychographResponseDataRepository.find({
+        where: { psychograph_response_data_id: psychographResponse.psychograph_response_id },
+      });
+
+      // Add the found psychograph_response_data to the list
+      psychographResponseDataList = [...psychographResponseDataList, ...psychographResponseData];
+    }
+
+
+
+    console.log(aioAnalysisResponse);
+
+    // Format respons sesuai kebutuhan Anda
+    return {
+      user_id: aioAnalysisResponse.user_id,
+      additional_notes: aioAnalysisResponse.additional_notes,
+      companyInfo: {
+        company_id: aioAnalysisResponse.company_information_response.company_id,
+        full_name: aioAnalysisResponse.company_information_response.full_name,
+        email_address: aioAnalysisResponse.company_information_response.email_address,
+        position_or_title: aioAnalysisResponse.company_information_response.position_or_title,
+        phone_number: aioAnalysisResponse.company_information_response.phone_number,
+      },
+      demograph: aioAnalysisResponse.demograph_response?.map(demograph => ({
+        parameter_name: demograph.parameter_name,
+        selected_value: demograph.selected_value,
+        result_value: demograph.result_value,
+      })) || [],
+      psychograph: aioAnalysisResponse.psychograph_response?.map(psychograph => ({
+        type: psychograph.type,
+        total_option: psychograph.total_option,
+        psychograph_response_data: psychographResponseDataList
+          .filter(data => data.psychograph_response_id === psychograph.psychograph_response_data)
+          .map(filteredData => ({
+            selected_value: filteredData.selected_value,
+            // Add other relevant fields here
+          })),
+      })) || [],
+    };
+  }
+
+
+
 
   findAll() {
     return `This action returns all aioAnalysisResponse`;
