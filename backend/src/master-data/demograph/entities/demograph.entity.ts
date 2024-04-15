@@ -9,6 +9,9 @@ export class Demograph {
     @Column({ nullable: false, type: 'varchar', length: 255 })
     parameter_name: string;
 
+    @Column({ nullable: true, type: 'varchar', length: 255 })
+    custom_result_parameter: string;
+
     @CreateDateColumn({ nullable: false, type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', precision: null })
     created_at: Date;
 

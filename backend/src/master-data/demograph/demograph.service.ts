@@ -34,7 +34,11 @@ export class DemographService {
   }
 
   async findAll(): Promise<Demograph[]> {
-    return await this.demographRepository.find();
+    const demographs = await this.demographRepository.find({ relations: ['options'] });
+    return demographs.map(demograph => ({
+      ...demograph,
+      number_of_options: demograph.options ? demograph.options.length : 0,
+    }));
   }
 
   async findOne(demograph_id: number): Promise<Demograph | any> {
