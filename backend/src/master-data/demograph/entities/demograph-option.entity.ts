@@ -6,7 +6,7 @@ export class DemographOption {
   @PrimaryGeneratedColumn()
   demograph_option_id: number;
 
-  @ManyToOne(() => Demograph, demograph => demograph.options, { nullable: false })
+  @ManyToOne(() => Demograph, demograph => demograph.list_of_options, { nullable: false })
   @JoinColumn({ name: "demograph_id" })
   demograph_id: Demograph;
 

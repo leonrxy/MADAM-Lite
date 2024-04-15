@@ -14,6 +14,7 @@ const DeleteDemograph = ({ open, setOpen, demographData }) => {
   const handleDelete = () => {
     http.delete(`demograph/${demographData.demograph_id}`).then((res) => {
       const { message, status } = res;
+      console.log(message);
       setModalMessage(message);
       setModalStatus(status === "success" ? "success" : "failed");
       setOpen(false);
@@ -35,10 +36,10 @@ const DeleteDemograph = ({ open, setOpen, demographData }) => {
         footer={
           <>
             <div className="flex justify-center">
-              <Button key="back" className="mr-3" onClick={handleCancel}>
+              <Button className="mr-3" onClick={handleCancel}>
                 No, cancel
               </Button>
-              <Button key="submit" type="primary" onClick={handleDelete}>
+              <Button type="primary" onClick={handleDelete}>
                 Yes, delete
               </Button>
             </div>
@@ -50,12 +51,13 @@ const DeleteDemograph = ({ open, setOpen, demographData }) => {
         </div>
         <div className="flex justify-center mb-3">
           <Text className="text-xl font-semibold text-center">
-          This item has been permanently removed. You can add it back later. {"'" + demographData?.parameter_name + "'?"}
+            Are you sure to delete demograph{" "}
+            {"'" + demographData?.parameter_name + "'?"}
           </Text>
         </div>
-        <div className="flex justify-center mb-7">
+        <div className="flex justify-center mb-7 text-center">
           <Text className="text-gray-400 text-base">
-          Demograph parameter has been successfully removed.
+            This item has been permanently removed. You can add it back later.
           </Text>
         </div>
       </Modal>

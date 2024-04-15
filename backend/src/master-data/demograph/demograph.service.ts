@@ -24,7 +24,7 @@ export class DemographService {
       const savedDemograph = await this.demographRepository.save(demograph);
 
       return {
-        success: true,
+        status: "success",
         message: 'Demograph created successfully',
         data: savedDemograph,
       };
@@ -34,10 +34,10 @@ export class DemographService {
   }
 
   async findAll(): Promise<Demograph[]> {
-    const demographs = await this.demographRepository.find({ relations: ['options'] });
+    const demographs = await this.demographRepository.find({ relations: ['list_of_options'] });
     return demographs.map(demograph => ({
       ...demograph,
-      number_of_options: demograph.options ? demograph.options.length : 0,
+      number_of_options: demograph.list_of_options ? demograph.list_of_options.length : 0,
     }));
   }
 
@@ -56,7 +56,7 @@ export class DemographService {
     try {
       const updatedDemograph = await this.demographRepository.save(demograph);
       return {
-        success: true,
+        status: "success",
         message: 'Demograph updated successfully',
         data: updatedDemograph,
       };
@@ -66,26 +66,31 @@ export class DemographService {
 
   }
 
-  async remove(id: number) {
-    const demograph = await this.findOne(id);
+  async remove(demograph_id: number) {
+    const demograph = await this.findOne(demograph_id);
     if (!demograph) {
       throw new NotFoundException('Demograph not found')
     }
 
-    const demographOptions = await this.demographOptionRepository.find({
-      where: { demograph_id: demograph.id },
-    });
-
-    await Promise.all(
-      demographOptions.map(async (option) =>
-        this.demographOptionRepository.remove(option),
-      ),
-    );
-
     try {
+      const demographOptions = await this.demographOptionRepository.find({
+        where: { demograph_id: demograph.demograph_id },
+      });
+      if(!demographOptions || demographOptions.length === 0) {
+        throw new NotFoundException('Demograph options not found')
+      }
+      console.log(demograph)
+      console.log(demographOptions);
+
+      await Promise.all(
+        demographOptions.map(async (option) =>
+          this.demographOptionRepository.remove(option),
+        ),
+      );
+
       const removedDemograph = await this.demographRepository.remove(demograph);
       return {
-        success: true,
+        status: "success",
         message: 'Demograph removed successfully',
         data: removedDemograph,
       };

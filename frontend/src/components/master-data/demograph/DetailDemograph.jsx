@@ -1,4 +1,4 @@
-import { Button, Descriptions, Modal } from "antd";
+import { Badge, Button, Descriptions, Modal } from "antd";
 import InfoIcon from "../../../assets/Info.svg";
 import EditDemograph from "./EditDemograph";
 import { useState } from "react";
@@ -6,12 +6,12 @@ import { useState } from "react";
 const DetailDemograph = ({ open, setOpen, demographData, fetchData }) => {
   const [openEditDemograph, setOpenEditDemograph] = useState(false);
   const handleClose = () => {
-    setOpen(false); 
+    setOpen(false);
   };
 
   const handleEdit = () => {
     setOpen(false);
-    setOpenEditDemograph(true); 
+    setOpenEditDemograph(true);
   };
 
   const formatUpdatedAt = (updatedAt) => {
@@ -27,7 +27,7 @@ const DetailDemograph = ({ open, setOpen, demographData, fetchData }) => {
 
   const items = [
     {
-      key: "1",
+      key: "demograph_id",
       label: "Demograph ID",
       children: demographData?.demograph_id,
       span: 3,
@@ -35,7 +35,7 @@ const DetailDemograph = ({ open, setOpen, demographData, fetchData }) => {
       contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
     {
-      key: "2",
+      key: "parameter_name",
       label: "Parameter Name",
       children: demographData?.parameter_name,
       span: 3,
@@ -43,20 +43,48 @@ const DetailDemograph = ({ open, setOpen, demographData, fetchData }) => {
       contentStyle: { background: "#ffffff", textAlign: "right" },
     },
     {
-      key: "3",
-      label: "Number of Options",
-      children: demographData?.option_value,
+      key: "custom_result_parameter",
+      label: "Custom Result Parameter",
+      children: demographData?.custom_result_parameter,
       span: 3,
       labelStyle: { background: "#F8F8F8" },
       contentStyle: { background: "#F8F8F8", textAlign: "right" },
     },
     {
-      key: "4",
-      label: "Last Update",
-      children: formatUpdatedAt(demographData?.updated_at),
+      key: "number_of_options",
+      label: "Number of Options",
+      children: demographData?.number_of_options,
+      span: 3,
+      labelStyle: { background: "#ffffff" },
+      contentStyle: { background: "#ffffff", textAlign: "right" },
+    },
+    {
+      key: "list_of_options",
+      label: "List of Options",
+      children: demographData?.list_of_options.map((option) => (
+        <Badge
+          key={option.demograph_option_id}
+          count={option.option_value}
+          showZero
+          color="#F6F6F6"
+          style={{
+            borderColor: "#BBBBBB",
+            color: "#000000",
+            margin: "5px 0 0 3px",
+          }}
+        />
+      )),
       span: 3,
       labelStyle: { background: "#F8F8F8" },
       contentStyle: { background: "#F8F8F8", textAlign: "right" },
+    },
+    {
+      key: "updated_at",
+      label: "Last Update",
+      children: formatUpdatedAt(demographData?.updated_at),
+      span: 3,
+      labelStyle: { background: "#ffffff" },
+      contentStyle: { background: "#ffffff", textAlign: "right" },
     },
   ];
 
@@ -75,20 +103,19 @@ const DetailDemograph = ({ open, setOpen, demographData, fetchData }) => {
           </div>
         }
         centered={true}
+        width={600}
         visible={open}
         onCancel={handleClose}
-        footer={[
-          <>
-            <div className="mt-7" style={{ textAlign: "center" }}>
-              <Button className="mr-3" key="edit" onClick={handleEdit}>
-                Edit Data
-              </Button>
-              <Button key="back" type="primary" onClick={handleClose}>
-                Back
-              </Button>
-            </div>
-          </>,
-        ]}
+        footer={
+          <div className="mt-7" style={{ textAlign: "center" }}>
+            <Button className="mr-3" onClick={handleEdit}>
+              Edit Data
+            </Button>
+            <Button type="primary" onClick={handleClose}>
+              Back
+            </Button>
+          </div>
+        }
       >
         {/* Garis horizontal di bawah ikon dan teks */}
         <div
@@ -96,9 +123,21 @@ const DetailDemograph = ({ open, setOpen, demographData, fetchData }) => {
         >
           <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
         </div>
-        {demographData && <Descriptions bordered items={items} size="middle" />}
+        {demographData && (
+          <Descriptions
+            bordered
+            items={items}
+            size="middle"
+            labelStyle={{ width: "50%" }}
+          />
+        )}
       </Modal>
-      <EditDemograph open={openEditDemograph} setOpen={setOpenEditDemograph} demographData={demographData} fetchData={fetchData}/>
+      <EditDemograph
+        open={openEditDemograph}
+        setOpen={setOpenEditDemograph}
+        demographData={demographData}
+        fetchData={fetchData}
+      />
     </>
   );
 };

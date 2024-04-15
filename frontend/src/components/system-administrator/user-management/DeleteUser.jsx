@@ -50,7 +50,7 @@ const DeleteUser = ({ open, setOpen, userData }) => {
             Are you sure to delete user {"'" + userData?.name + "'?"}
           </Text>
         </div>
-        <div className="flex justify-center mb-7">
+        <div className="flex justify-center mb-7 text-center">
           <Text className="text-gray-400 text-base">
             This user has been permanently removed.
           </Text>

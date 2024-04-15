@@ -92,7 +92,7 @@ export class DemographOptionService {
             const dropdownData = demographs.map(demograph => {
                 return {
                     ...demograph,
-                    options: demograph.options.map(option => ({
+                    options: demograph.list_of_options.map(option => ({
                         id: option.demograph_option_id,
                         option_value: option.option_value,
                         result_value: option.result_value

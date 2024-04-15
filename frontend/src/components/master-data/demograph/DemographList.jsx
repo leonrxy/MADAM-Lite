@@ -5,7 +5,6 @@ import http from "../../../utils/http";
 import AddDemograph from "./AddDemograph";
 import DeleteDemograph from "./DeleteDemograph"
 import DetailDemograph from "./DetailDemograph";
-import EditDemograph from "./EditDemograph";
 
 const { Text } = Typography;
 const { Search } = Input;
@@ -30,6 +29,7 @@ const DemographList = () => {
   const columns = [
     {
       title: <Text className="text-gray-500 font-normal">No</Text>,
+      key: "no",
       width: "7%",
       render: (text, record, index) =>
         (tableParams.pagination.current - 1) * tableParams.pagination.pageSize +
@@ -37,24 +37,26 @@ const DemographList = () => {
         1,
       filteredValue: [search],
       onFilter: (value, record) => {
-        return String(record.parametername)
+        return String(record.parameter_name)
           .toLocaleLowerCase()
           .includes(value.toLocaleLowerCase());
       },
     },
     {
       title: <Text className="text-gray-500 font-normal">Parameter Name</Text>,
+      key: "parameter_name",
       dataIndex: "parameter_name",
       sorter: (a, b) => a.parameter_name.localeCompare(b.parameter_name),
     },
     {
       title: <Text className="text-gray-500 font-normal">Number of Options </Text>,
-      dataIndex: "option_value",
-      sorter: (a, b) => a.option_value.localeCompare(b.option_value),
-      render: (optionValue) => (optionValue ? optionValue.length : 0),
+      key: "number_of_options",
+      dataIndex: "number_of_options",
+      sorter: (a, b) => a.number_of_options.localeCompare(b.number_of_options),
     },
     {
       title: <Text className="text-gray-500 font-normal">Last Update</Text>,
+      key: "updated_at",
       dataIndex: "updated_at",
       sorter: (a, b) => a.updated_at.localeCompare(b.updated_at),
       render: (text) => {
@@ -73,7 +75,7 @@ const DemographList = () => {
     {
       title: <Text className="text-gray-500 font-normal">Action</Text>,
       dataIndex: "",
-      key: "x",
+      key: "action",
       width: "20%",
       render: (text, record) => (
         <>
@@ -166,7 +168,7 @@ const DemographList = () => {
         <Table
           className="mt-3"
           columns={columns}
-          rowKey={(record) => record.id}
+          rowKey={(record) => record.demograph_id}
           dataSource={data}
           pagination={tableParams.pagination}
           loading={loading}

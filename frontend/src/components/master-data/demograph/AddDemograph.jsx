@@ -1,4 +1,5 @@
-import { Button, Form, Input, Modal, Space } from "antd";
+import { Button, Form, Input, Modal, Typography } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 import PlusIcon from "../../../assets/Plus.svg";
 import { useState } from "react";
 import http from "../../../utils/http";
@@ -9,7 +10,6 @@ const AddDemograph = ({ open, setOpen }) => {
   const [modalMessage, setModalMessage] = useState("");
   const [modalStatus, setModalStatus] = useState("");
   const [form] = Form.useForm();
-  const [options, setOptions] = useState([]);
 
   const handleCancel = () => {
     setOpen(false);
@@ -19,35 +19,19 @@ const AddDemograph = ({ open, setOpen }) => {
     form
       .validateFields()
       .then((values) => {
-        const requestData = {
-          ...values,
-          options: options.map((opt) => ({
-            optionValue: opt.optionValue,
-            customResultValue: opt.customResultValue,
-          })),
-        };
-        http.post("demograph", requestData).then((res) => {
+        http.post(`demograph/`, values).then((res) => {
+          console.log(values);
           const { message, status } = res;
           setModalMessage(message);
           setModalStatus(status === "success" ? "success" : "failed");
-          form.resetFields();
-          setOpen(false);
-          setOpenStatusModal(true);
+          form.resetFields(); // Mengosongkan form setelah disimpan
+          setOpen(false); // Menutup modal setelah disimpan
+          setOpenStatusModal(true); // Membuka modal status
         });
       })
       .catch((errorInfo) => {
         console.log("Validation failed:", errorInfo);
       });
-  };
-
-  const handleAddOption = () => {
-    setOptions([...options, { optionValue: "", customResultValue: "" }]);
-  };
-
-  const handleRemoveOption = (index) => {
-    const updatedOptions = [...options];
-    updatedOptions.splice(index, 1);
-    setOptions(updatedOptions);
   };
 
   return (
@@ -72,9 +56,23 @@ const AddDemograph = ({ open, setOpen }) => {
         destroyOnClose={true}
         footer={null}
       >
-        <Form form={form} layout="vertical" requiredMark={false}>
+        {/* Garis horizontal di bawah ikon dan teks */}
+        <div
+          style={{ display: "flex", alignItems: "center", marginBottom: 16 }}
+        >
+          <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
+        </div>
+        <Form
+          form={form}
+          layout="vertical"
+          requiredMark={false}
+          initialValues={{
+            list_option_value: [{}],
+          }}
+        >
+          {/* Field Name */}
           <Form.Item
-            name="parametername"
+            name="parameter_name"
             label="Parameter Name"
             style={{ marginBottom: 10 }}
             rules={[{ required: true, message: "Please enter parameter name" }]}
@@ -82,83 +80,75 @@ const AddDemograph = ({ open, setOpen }) => {
             <Input style={{ height: 40 }} placeholder="Enter Parameter Name" />
           </Form.Item>
 
+          {/* Field Username */}
           <Form.Item
-            name="customresultparameter"
+            name="custom_result_parameter"
             label="Custom Result Parameter"
             style={{ marginBottom: 10 }}
             rules={[
               {
-                required: true,
-                message: "Please enter Custom Result parameter",
+                message: "Please enter custom result parameter",
               },
             ]}
           >
             <Input
               style={{ height: 40 }}
-              placeholder="Please enter Custom Result Parameter"
+              placeholder="Enter Custom Result Parameter"
             />
           </Form.Item>
 
-          <Space
-            style={{ marginBottom: 10, justifyContent: "flex-end" }}
-            align="baseline"
-          >
-            <Form.Item
-              name="listoptionvalue"
-              label="List Option Value"
-              style={{ marginBottom: 0 }}
-            ></Form.Item>
-            <Button
-              type="primary"
-              onClick={handleAddOption}
-              style={{ color: "white", marginLeft: 310 }}
-            >
-              + Add Option
-            </Button>
-          </Space>
-
-          {options.map((option, index) => (
-            <Space key={index} style={{ display: "flex", marginBottom: 10 }}>
-              <Form.Item
-                name={`optionValue${index}`}
-                style={{ marginBottom: 0 }}
-                rules={[
-                  { required: true, message: "Please enter Option Value" },
-                ]}
+          {/* Nest Form.List */}
+          <Form.List name="list_option_value">
+            {(fields, { add, remove }) => (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  rowGap: 10,
+                }}
               >
-                <Input
-                  placeholder="Enter Option Value"
-                  value={option.optionValue}
-                  onChange={(e) =>
-                    handleOptionValueChange(e.target.value, index)
-                  }
-                />
-              </Form.Item>
-              <Form.Item
-                name={`customResultValue${index}`}
-                style={{ marginBottom: 0 }}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter Custom Result Value",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Enter Custom Result Value"
-                  value={option.customResultValue}
-                  onChange={(e) =>
-                    handleCustomResultValueChange(e.target.value, index)
-                  }
-                />
-              </Form.Item>
-              <Button type="danger" onClick={() => handleRemoveOption(index)}>
-                X
-              </Button>
-            </Space>
-          ))}
+                <div className="flex items-center justify-between">
+                  <span>List Option Value</span>
+                  <Button
+                    type="primary"
+                    className="rounded-xl"
+                    onClick={() => add()}
+                    block
+                    style={{ width: 120, height: 37 }}
+                  >
+                    + Add Option
+                  </Button>
+                </div>
 
-          <div style={{ textAlign: "center" }}>
+                {fields.map((field) => (
+                  <div key={field.key} className="flex items-center">
+                    <Form.Item noStyle name={[field.name, "option_value"]}>
+                      <Input
+                        style={{ height: 40 }}
+                        placeholder="Enter Option Value"
+                        className="mr-2"
+                      />
+                    </Form.Item>
+                    <Form.Item noStyle name={[field.name, "result_value"]}>
+                      <Input
+                        style={{ height: 40 }}
+                        placeholder="Enter Custom Result Value"
+                        className="mr-2"
+                      />
+                    </Form.Item>
+                    <CloseOutlined
+                      onClick={() => {
+                        remove(field.name);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </Form.List>
+
+          {/* Tombol untuk membatalkan atau menyimpan data */}
+          <div className="mt-7" style={{ textAlign: "center" }}>
             <Button onClick={handleCancel} style={{ marginRight: 8 }}>
               Cancel
             </Button>
@@ -166,6 +156,13 @@ const AddDemograph = ({ open, setOpen }) => {
               Save
             </Button>
           </div>
+          <Form.Item noStyle shouldUpdate>
+            {() => (
+              <Typography>
+                <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
+              </Typography>
+            )}
+          </Form.Item>
         </Form>
       </Modal>
       <StatusModal

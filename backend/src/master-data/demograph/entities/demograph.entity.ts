@@ -18,6 +18,6 @@ export class Demograph {
     @UpdateDateColumn({ nullable: false, type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP()', precision: null })
     updated_at: Date;
 
-    @OneToMany(() => DemographOption, option => option.demograph_id)
-    options: DemographOption[];
+    @OneToMany(() => DemographOption, list_of_options => list_of_options.demograph_id)
+    list_of_options: DemographOption[];
 }
