@@ -1,16 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Request, UseGuards } from '@nestjs/common';
 import { AioAnalysisResponseService } from './aio-analysis-response.service';
 import { CreateAioAnalysisResponseDto } from './dto/create-aio-analysis-response.dto';
-import { UpdateAioAnalysisResponseDto } from './dto/update-aio-analysis-response.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
-@Controller('aio-analysis-response')
+@Controller('aio-analysis')
+@UseGuards(new JwtAuthGuard(['superadmin', 'user']))
 export class AioAnalysisResponseController {
-  constructor(private readonly aioAnalysisResponseService: AioAnalysisResponseService) {}
+  constructor(private readonly aioAnalysisResponseService: AioAnalysisResponseService) { }
 
   @Post()
-  create(@Body() createAioAnalysisResponseDto: CreateAioAnalysisResponseDto) {
-    return this.aioAnalysisResponseService.create(createAioAnalysisResponseDto);
+  async submit(@Body() createAioAnalysisResponseDto: CreateAioAnalysisResponseDto, @Request() req) {
+    const user_id = req.user.user_id;
+    return await this.aioAnalysisResponseService.submit(createAioAnalysisResponseDto, user_id);
   }
+
 
   @Get()
   findAll() {
@@ -20,11 +23,6 @@ export class AioAnalysisResponseController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.aioAnalysisResponseService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAioAnalysisResponseDto: UpdateAioAnalysisResponseDto) {
-    return this.aioAnalysisResponseService.update(+id, updateAioAnalysisResponseDto);
   }
 
   @Delete(':id')

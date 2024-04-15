@@ -10,10 +10,6 @@ import { DemographModule } from './master-data/demograph/demograph.module';
 import { PsychographModule } from './master-data/psychograph/psychograph.module';
 import { AioAnalysisResponseModule } from './data-analysis/aio-analysis/aio-analysis-response/aio-analysis-response.module';
 import { CompanyModule } from './data-analysis/aio-analysis/company/company.module';
-import { DemographResponseModule } from './data-analysis/aio-analysis/demograph-response/demograph-response.module';
-import { CompanyInformationResponseModule } from './data-analysis/aio-analysis/company-information-response/company-information-response.module';
-import { PsychographResponseDataModule } from './data-analysis/aio-analysis/psychograph-response-data/psychograph-response-data.module';
-import { PsychographResponseModule } from './data-analysis/aio-analysis/psychograph-response/psychograph-response.module';
 import { ActivityHistoryModule } from './activity-history/activity-history.module';
 
 @Module({
@@ -37,12 +33,8 @@ import { ActivityHistoryModule } from './activity-history/activity-history.modul
     AuthModule,
     DemographModule,
     PsychographModule,
-    DemographResponseModule,
-    CompanyInformationResponseModule,
     AioAnalysisResponseModule,
     CompanyModule,
-    PsychographResponseDataModule,
-    PsychographResponseModule,
     ActivityHistoryModule,
   ],
   controllers: [AppController],

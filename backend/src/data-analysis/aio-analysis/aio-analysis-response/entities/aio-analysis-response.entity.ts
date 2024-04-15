@@ -20,7 +20,7 @@ export class AioAnalysisResponse {
     submitted_at: Date;
 
     @OneToOne(() => CompanyInformationResponse, company_information_response => company_information_response.aio_analysis_response_id)
-    company_information_response: DemographResponse;
+    company_information_response: CompanyInformationResponse;
 
     @OneToMany(() => DemographResponse, demograph_response => demograph_response.aio_analysis_response_id)
     demograph_response: DemographResponse[];

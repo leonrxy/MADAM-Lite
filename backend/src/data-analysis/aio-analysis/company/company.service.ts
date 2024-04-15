@@ -1,26 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Company } from './entities/company.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CompanyService {
-  create(createCompanyDto: CreateCompanyDto) {
-    return 'This action adds a new company';
-  }
+  constructor(
+    @InjectRepository(Company)
+    private readonly companyRepository:
+      Repository<Company>,
+  ) { }
 
-  findAll() {
-    return `This action returns all company`;
-  }
+  async create(createCompanyDto: CreateCompanyDto) {
+    try {
 
-  findOne(id: number) {
-    return `This action returns a #${id} company`;
-  }
+      const savedCompany = await this.companyRepository.save(createCompanyDto);
 
-  update(id: number, updateCompanyDto: UpdateCompanyDto) {
-    return `This action updates a #${id} company`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} company`;
+      return {
+        success: true,
+        message: 'Company created successfully',
+        data: savedCompany,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create psychograph');
+    }
   }
 }
