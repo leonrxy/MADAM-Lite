@@ -1,4 +1,4 @@
-import { Button, Layout, Tabs, Typography } from "antd";
+import { Badge, Button, Layout, Tabs, Typography } from "antd";
 import { useState, useEffect } from "react";
 import { FiPlus } from "react-icons/fi";
 import AddPsychograph from "./AddPsychograph";
@@ -11,6 +11,7 @@ const { Text } = Typography;
 const { Content } = Layout;
 
 const PsychographIndex = () => {
+  const [activeTab, setActiveTab] = useState("activity");
   const [openAddPsychograph, setOpenAddPsychograph] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState({
@@ -29,25 +30,15 @@ const PsychographIndex = () => {
     http
       .get(`psychograph/type/${type}`)
       .then((data) => {
-        const mappedData = data.map((item) => {
-          const foundItem = items.find(
-            (i) => i.label.toLowerCase() === item.option_value.toLowerCase()
-          );
-          if (foundItem) {
-            return { ...item, key: foundItem.key };
-          }
-          return item;
-        });
-
         switch (type) {
           case "activity":
-            setActivityData(mappedData);
+            setActivityData(data);
             break;
           case "interest":
-            setInterestData(mappedData);
+            setInterestData(data);
             break;
           case "opinion":
-            setOpinionData(mappedData);
+            setOpinionData(data);
             break;
           default:
             break;
@@ -58,7 +49,7 @@ const PsychographIndex = () => {
           ...tableParams,
           pagination: {
             ...tableParams.pagination,
-            total: mappedData.length,
+            total: data.length,
           },
         });
       })
@@ -74,7 +65,21 @@ const PsychographIndex = () => {
   const items = [
     {
       key: "activity",
-      label: "Activity",
+      label: (
+        <div className="flex items-center">
+          Activity
+          <Badge
+            count={activityData.length}
+            showZero
+            color={activeTab === "activity" ? "#F8D0CE" : "#F2F2F2"}
+            style={{
+              color: activeTab === "activity" ? "#DC362E" : "#929EAE",
+              marginLeft: 5,
+              borderRadius: 6,
+            }}
+          />
+        </div>
+      ),
       children: (
         <ActivityList
           data={activityData}
@@ -88,7 +93,21 @@ const PsychographIndex = () => {
     },
     {
       key: "interest",
-      label: "Interest",
+      label: (
+        <div className="flex items-center">
+          Interest
+          <Badge
+            count={interestData.length}
+            showZero
+            color={activeTab === "interest" ? "#F8D0CE" : "#F2F2F2"}
+            style={{
+              color: activeTab === "interest" ? "#DC362E" : "#929EAE",
+              marginLeft: 5,
+              borderRadius: 6,
+            }}
+          />
+        </div>
+      ),
       children: (
         <InterestList
           data={interestData}
@@ -102,7 +121,21 @@ const PsychographIndex = () => {
     },
     {
       key: "opinion",
-      label: "Opinion",
+      label: (
+        <div className="flex items-center">
+          Opinion
+          <Badge
+            count={opinionData.length}
+            showZero
+            color={activeTab === "opinion" ? "#F8D0CE" : "#F2F2F2"}
+            style={{
+              color: activeTab === "opinion" ? "#DC362E" : "#929EAE",
+              marginLeft: 5,
+              borderRadius: 6,
+            }}
+          />
+        </div>
+      ),
       children: (
         <OpinionList
           data={opinionData}
@@ -116,6 +149,10 @@ const PsychographIndex = () => {
     },
   ];
 
+  const handleTabChange = (key) => {
+    setActiveTab(key);
+  };
+
   return (
     <Content className="p-6">
       <div className="flex items-center justify-between mb-4">
@@ -128,7 +165,16 @@ const PsychographIndex = () => {
           <FiPlus className="mr-2" /> Add Option
         </Button>
       </div>
-      <Tabs defaultActiveKey="1" items={items} />
+      <Tabs
+        defaultActiveKey="activity"
+        items={items}
+        tabBarStyle={{
+          background: "#F8F8F8",
+          paddingLeft: 20,
+          borderRadius: 12,
+        }}
+        onChange={handleTabChange}
+      />
       <AddPsychograph
         open={openAddPsychograph}
         setOpen={setOpenAddPsychograph}
