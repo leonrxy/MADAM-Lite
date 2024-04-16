@@ -1,8 +1,6 @@
 import DashboardLayout from "../../layouts/Dashboard.layout";
-import { Layout } from "antd";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-
-const { Content } = Layout;
+import HistoryList from "../../components/data-analysis/history/HistoryList";
 
 const History = () => {
   return (
@@ -14,7 +12,7 @@ const History = () => {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/star.svg" />
         </Helmet>
-        <Content className="p-6">History Content</Content>
+        <HistoryList />
       </DashboardLayout>
     </HelmetProvider>
   );

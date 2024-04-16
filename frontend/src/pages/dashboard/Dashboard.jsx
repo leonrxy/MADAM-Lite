@@ -1,4 +1,5 @@
 import DashboardLayout from "../../layouts/Dashboard.layout";
+import { DashboardAdmin, DashboardUser } from "../dashboard";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Layout, message } from "antd";
@@ -10,6 +11,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const queryParams = new URLSearchParams(location.search);
+  const userData = JSON.parse(sessionStorage.getItem("userData"));
 
   useEffect(() => {
     if (queryParams.has("loginSuccess")) {
