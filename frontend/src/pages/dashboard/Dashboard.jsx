@@ -1,9 +1,9 @@
 import DashboardLayout from "../../layouts/Dashboard.layout";
-import { DashboardAdmin, DashboardUser } from "../dashboard";
+import DashboardAdmin from "../../components/dashboard/DashboardAdmin";
+import DashboardUser from "../../components/dashboard/DashboardUser";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Layout, message } from "antd";
-const { Content } = Layout;
+import { message } from "antd";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 
 const Dashboard = () => {
@@ -37,8 +37,7 @@ const Dashboard = () => {
           <link rel="icon" href="/star.svg" />
         </Helmet>
         {contextHolder}
-
-        <Content className="p-6">DASHBOARD</Content>
+        {userData.role === "superadmin" ? <DashboardAdmin /> : <DashboardUser />}
       </DashboardLayout>
     </HelmetProvider>
   );
