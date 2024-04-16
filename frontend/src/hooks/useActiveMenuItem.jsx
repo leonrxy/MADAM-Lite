@@ -10,18 +10,23 @@ const useActiveMenuItem = () => {
   useEffect(() => {
     const activeItem = menuItems.find((item) => {
       if (item.children) {
-        return item.children.find(
+        const subMenuItem = item.children.find(
           (subItem) =>
             subItem.link === location.pathname &&
             subItem.role.includes(userData.role)
         );
-      } else {
-        return (
-          item.link === location.pathname && item.role.includes(userData.role)
-        );
+        if (subMenuItem) {
+          setActiveMenuItem(subMenuItem);
+          return true;
+        }
       }
+      return (
+        item.link === location.pathname && item.role.includes(userData.role)
+      );
     });
-    setActiveMenuItem(activeItem);
+    if (!activeItem.children) {
+        setActiveMenuItem(activeItem);
+    }
   }, [location.pathname, userData]);
 
   return { activeMenuItem, setActiveMenuItem };

@@ -8,7 +8,6 @@ import EditPsychograph from "./EditPsychograph";
 
 const { Text } = Typography;
 const { Content } = Layout;
-const { TabPane } = Tabs;
 
 const PsychographList = () => {
   const [data, setData] = useState([]);
@@ -166,38 +165,7 @@ const PsychographList = () => {
         </Button>
       </div>
 
-      <Tabs defaultActiveKey="1" onChange={handleTabChange}>
-        <TabPane tab="Activity" key="activity">
-          {data
-            .filter((d) => d.option_value.toLowerCase() === "activity")
-            .map((d) => (
-              <div key={d.option_value}>
-                <p>{d.option_value}</p>
-                <p>Last Update: {d.updated_at}</p>
-              </div>
-            ))}
-        </TabPane>
-        <TabPane tab="Interest" key="interest">
-          {data
-            .filter((d) => d.option_value.toLowerCase() === "interest")
-            .map((d) => (
-              <div key={d.option_value}>
-                <p>{d.option_value}</p>
-                <p>Last Update: {d.updated_at}</p>
-              </div>
-            ))}
-        </TabPane>
-        <TabPane tab="Opinion" key="opinion">
-          {data
-            .filter((d) => d.option_value.toLowerCase() === "opinion")
-            .map((d) => (
-              <div key={d.option_value}>
-                <p>{d.option_value}</p>
-                <p>Last Update: {d.updated_at}</p>
-              </div>
-            ))}
-        </TabPane>
-      </Tabs>
+      <Tabs defaultActiveKey="1" items={items} onChange={handleTabChange} />
 
       <Table
         className="mt-3"

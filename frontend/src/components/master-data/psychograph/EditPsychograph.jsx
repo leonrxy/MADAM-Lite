@@ -1,5 +1,4 @@
-import { Button, Form, Input, Modal, Select, Typography } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Select } from "antd";
 import EditIcon from "../../../assets/Edit.svg"; // Import gambar SVG PlusIcon
 import { useEffect, useState } from "react";
 import http from "../../../utils/http";
@@ -42,7 +41,7 @@ const EditPsychograph = ({ open, setOpen, psychographData, fetchData }) => {
     if (psychographData) {
       form.setFieldsValue({
         type: psychographData.type,
-        option_value :  psychographData.option_value
+        option_value: psychographData.option_value,
       });
     }
   }, [psychographData]);
@@ -90,21 +89,21 @@ const EditPsychograph = ({ open, setOpen, psychographData, fetchData }) => {
             list_options: [{}],
           }}
         >
-            <Form.Item
+          <Form.Item
             name="type"
-            label="Parameter Name"
+            label="Type"
             style={{ marginBottom: 10 }}
             rules={[
-              { required: true, message: "Please choose parameter name" },
+              { required: true, message: "Please choose type" },
             ]}
           >
             <Select
               placeholder="Choose Parameter Name"
               style={{ height: 40, width: "100%" }}
             >
-              <Option value="Activity">Activity</Option>
-              <Option value="Interest">Interest</Option>
-              <Option value="Opinion">Opinion</Option>
+              <Select.Option value="activity">Activity</Select.Option>
+              <Select.Option value="interest">Interest</Select.Option>
+              <Select.Option value="opinion">Opinion</Select.Option>
             </Select>
           </Form.Item>
 
