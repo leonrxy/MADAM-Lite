@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Breadcrumb, Layout, Button, Menu, Dropdown, Typography } from "antd";
 import Logo from "../assets/Logo.svg";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaUserCircle, FaBars, FaTimes, FaAngleDown } from "react-icons/fa";
-import menuItems from "./MenuItems";
+import menuItems from "../components/MenuItems";
+import useActiveMenuItem from "../hooks/useActiveMenuItem";
+import useBreadcrumbs from "../hooks/useBreadcrumbs";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -11,46 +13,19 @@ const { Text } = Typography;
 const DashboardLayout = ({ children }) => {
   const userData = JSON.parse(sessionStorage.getItem("userData"));
   const [collapsed, setCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState("");
-  const [activeSubMenu, setActiveSubMenu] = useState("");
-  const location = useLocation();
+  const { activeMenuItem } = useActiveMenuItem();
+  const { breadcrumbItems } = useBreadcrumbs();
+  const navigateTo = useNavigate();
 
-  const getActiveMenu = () => {
-    for (let j = 0; j < menuItems.length; j++) {
-      const menuItem = menuItems[j];
-      if (menuItem.children) {
-        const subMenuItem = menuItem.children.find(
-          (subItem) => subItem.link === location.pathname
-        );
-        if (subMenuItem && subMenuItem.role.includes(userData.role)) {
-          setActiveSubMenu(subMenuItem);
-          setActiveMenu(menuItem);
-          return menuItem;
-        }
-      } else if (
-        menuItem.link === location.pathname &&
-        menuItem.role.includes(userData.role)
-      ) {
-        setActiveMenu(menuItem);
-        return menuItem;
-      }
-    }
-    return null;
-  };
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((prevCollapsed) => !prevCollapsed);
+  }, []);
 
-  useEffect(() => {
-    setActiveMenu(getActiveMenu() ? getActiveMenu() : null);
-  }, [location.pathname]);
-
-  const toggleCollapsed = () => {
-    setCollapsed(!collapsed);
-  };
-
-  const onLogout = () => {
+  const onLogout = useCallback(() => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("userData");
-    window.location.href = "/login";
-  };
+    navigateTo("/login");
+  }, [navigateTo]);
 
   const menuNavbar = (
     <Menu>
@@ -59,52 +34,6 @@ const DashboardLayout = ({ children }) => {
       </Menu.Item>
     </Menu>
   );
-
-  const getBreadcrumbs = () => {
-    // Ambil bagian dari URL yang sesuai dengan setiap menu item dalam menuItems
-    const pathSnippets = location.pathname.split("/").filter((i) => i);
-
-    // Initialize breadcrumb items with "Home"
-    let breadcrumbItems = [<Breadcrumb.Item key="home">Home</Breadcrumb.Item>];
-
-    // Iterate through path snippets to find corresponding menu items
-    let currentPath = "";
-    for (let i = 0; i < pathSnippets.length; i++) {
-      currentPath += `/${pathSnippets[i]}`;
-
-      // Find the menu item that matches the current path
-      const menuItem = menuItems.find((item) => item.link === currentPath);
-      if (menuItem) {
-        breadcrumbItems.push(
-          <Breadcrumb.Item key={menuItem.key}>{menuItem.text}</Breadcrumb.Item>
-        );
-      } else {
-        for (let j = 0; j < menuItems.length; j++) {
-          const menuItem = menuItems[j];
-          if (menuItem.children) {
-            const subMenuItem = menuItem.children.find(
-              (subItem) => subItem.link === currentPath
-            );
-            if (subMenuItem) {
-              breadcrumbItems.push(
-                <Breadcrumb.Item key={menuItem.key}>
-                  {menuItem.text}
-                </Breadcrumb.Item>
-              );
-              breadcrumbItems.push(
-                <Breadcrumb.Item key={subMenuItem.key}>
-                  {subMenuItem.text}
-                </Breadcrumb.Item>
-              );
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    return breadcrumbItems;
-  };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -124,8 +53,8 @@ const DashboardLayout = ({ children }) => {
         </div>
         <Menu
           mode="inline"
-          defaultSelectedKeys={[activeMenu?.key, activeSubMenu?.key]}
-          selectedKeys={[activeSubMenu?.key, activeMenu?.key]}
+          defaultSelectedKeys={[activeMenuItem?.key]}
+          selectedKeys={[activeMenuItem?.key]}
           items={menuItems.filter((item) => item.role.includes(userData.role))}
         ></Menu>
       </Sider>
@@ -159,9 +88,7 @@ const DashboardLayout = ({ children }) => {
                 <FaBars className="text-xl text-gray-800 hover:text-black" />
               )}
             </Button>
-            <Text className="text-2xl font-medium">
-              {activeSubMenu ? activeSubMenu?.text : activeMenu?.text}
-            </Text>
+            <Text className="text-2xl font-medium">{activeMenuItem?.text}</Text>
           </div>
           <Button
             className="flex items-center mr-4 bg-gray-100 hover:bg-gray-400 p-6 rounded-xl focus:outline-none focus:shadow-outline"
@@ -201,7 +128,7 @@ const DashboardLayout = ({ children }) => {
               padding: "20px",
             }}
           >
-            {getBreadcrumbs()}
+            {breadcrumbItems}
           </Breadcrumb>
         </Header>
         <Content
