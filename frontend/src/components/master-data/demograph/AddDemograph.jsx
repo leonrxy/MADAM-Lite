@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Typography } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import PlusIcon from "../../../assets/Plus.svg";
 import { useState } from "react";
@@ -12,6 +12,7 @@ const AddDemograph = ({ open, setOpen }) => {
   const [form] = Form.useForm();
 
   const handleCancel = () => {
+    form.resetFields();
     setOpen(false);
   };
 
@@ -67,7 +68,7 @@ const AddDemograph = ({ open, setOpen }) => {
           layout="vertical"
           requiredMark={false}
           initialValues={{
-            list_option_value: [{}],
+            list_of_options: [{}],
           }}
         >
           {/* Field Name */}
@@ -98,7 +99,7 @@ const AddDemograph = ({ open, setOpen }) => {
           </Form.Item>
 
           {/* Nest Form.List */}
-          <Form.List name="list_option_value">
+          <Form.List name="list_of_options">
             {(fields, { add, remove }) => (
               <div
                 style={{
@@ -156,13 +157,6 @@ const AddDemograph = ({ open, setOpen }) => {
               Save
             </Button>
           </div>
-          <Form.Item noStyle shouldUpdate>
-            {() => (
-              <Typography>
-                <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-              </Typography>
-            )}
-          </Form.Item>
         </Form>
       </Modal>
       <StatusModal

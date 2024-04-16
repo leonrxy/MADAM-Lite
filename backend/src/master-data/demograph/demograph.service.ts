@@ -19,10 +19,29 @@ export class DemographService {
   }
   async create(createDemographDto: CreateDemographDto) {
     try {
-      const demograph = this.demographRepository.create(createDemographDto);
+      const { parameter_name, custom_result_parameter, list_of_options } = createDemographDto;
 
+      // Create demograph entity
+      const demograph = new Demograph();
+      demograph.parameter_name = parameter_name;
+      demograph.custom_result_parameter = custom_result_parameter;
+
+      // Save demograph entity
       const savedDemograph = await this.demographRepository.save(demograph);
 
+      // Create demograph option entities
+      if (list_of_options) {
+        const demographOptions = list_of_options.map(optionDto => {
+          const option = new DemographOption();
+          option.demograph_id = savedDemograph;
+          option.option_value = optionDto.option_value;
+          option.result_value = optionDto.result_value;
+          return option;
+        });
+
+        // Save demograph option entities
+        await this.demographOptionRepository.save(demographOptions);
+      }
       return {
         status: "success",
         message: 'Demograph created successfully',
@@ -51,10 +70,32 @@ export class DemographService {
       throw new NotFoundException('Demograph not found')
     };
 
-    Object.assign(demograph, updateDemographDto);
-
     try {
+      const { parameter_name, custom_result_parameter, list_of_options } = updateDemographDto;
+
+      // Update data demografi
+      demograph.parameter_name = parameter_name;
+      demograph.custom_result_parameter = custom_result_parameter;
+      console.log(demograph);
+      // Simpan perubahan pada data demografi
       const updatedDemograph = await this.demographRepository.save(demograph);
+
+      // Hapus semua opsi demografi terkait
+      await this.demographOptionRepository.delete({ demograph_id: demograph });
+
+      // Buat dan simpan opsi demografi baru jika ada
+      if (list_of_options) {
+        const demographOptions = list_of_options.map(optionDto => {
+          const option = new DemographOption();
+          option.demograph_id = updatedDemograph;
+          option.option_value = optionDto.option_value;
+          option.result_value = optionDto.result_value;
+          return option;
+        });
+
+        await this.demographOptionRepository.save(demographOptions);
+      }
+
       return {
         status: "success",
         message: 'Demograph updated successfully',
@@ -71,22 +112,19 @@ export class DemographService {
     if (!demograph) {
       throw new NotFoundException('Demograph not found')
     }
-
+    console.log(demograph);
     try {
       const demographOptions = await this.demographOptionRepository.find({
         where: { demograph_id: demograph.demograph_id },
       });
-      if(!demographOptions || demographOptions.length === 0) {
-        throw new NotFoundException('Demograph options not found')
-      }
-      console.log(demograph)
       console.log(demographOptions);
-
-      await Promise.all(
-        demographOptions.map(async (option) =>
-          this.demographOptionRepository.remove(option),
-        ),
-      );
+      if (demographOptions) {
+        await Promise.all(
+          demographOptions.map(async (option) =>
+            this.demographOptionRepository.remove(option),
+          ),
+        );
+      }
 
       const removedDemograph = await this.demographRepository.remove(demograph);
       return {

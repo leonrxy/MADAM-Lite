@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
 export class CreateDemographOptionDto {
-    @IsNotEmpty()
+    demograph_option_id: number;
     demograph_id: number;
 
     @IsNotEmpty()

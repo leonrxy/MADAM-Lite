@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Typography } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 import EditIcon from "../../../assets/Edit.svg"; // Import gambar SVG PlusIcon
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ const EditDemograph = ({ open, setOpen, demographData, fetchData }) => {
   const [form] = Form.useForm(); // Inisialisasi form
 
   const handleCancel = () => {
+    form.resetFields();
     setOpen(false); // Menutup modal saat tombol Cancel ditekan
   };
 
@@ -41,10 +42,18 @@ const EditDemograph = ({ open, setOpen, demographData, fetchData }) => {
   useEffect(() => {
     if (demographData) {
       form.setFieldsValue({
-        parameter_name: demographData.parameter_name,
-        custom_result_parameter: demographData.custom_result_parameter,
-        list_option_value: demographData.list_of_options,
+        parameter_name: demographData?.parameter_name,
+        custom_result_parameter: demographData?.custom_result_parameter,
       });
+      if (demographData.list_of_options) {
+        const options = demographData.list_of_options.map((option) => ({
+          option_value: option?.option_value,
+          result_value: option?.result_value,
+        }));
+        form.setFieldsValue({
+          list_of_options: options,
+        });
+      }
     }
   }, [demographData]);
 
@@ -88,7 +97,7 @@ const EditDemograph = ({ open, setOpen, demographData, fetchData }) => {
           layout="vertical"
           requiredMark={false}
           initialValues={{
-            list_options: [{}],
+            list_of_options: [demographData?.list_of_options],
           }}
         >
           {/* Field Name */}
@@ -119,7 +128,7 @@ const EditDemograph = ({ open, setOpen, demographData, fetchData }) => {
           </Form.Item>
 
           {/* Nest Form.List */}
-          <Form.List name="list_option_value">
+          <Form.List name="list_of_options">
             {(fields, { add, remove }) => (
               <div
                 style={{
@@ -177,13 +186,6 @@ const EditDemograph = ({ open, setOpen, demographData, fetchData }) => {
               Save
             </Button>
           </div>
-          <Form.Item noStyle shouldUpdate>
-            {() => (
-              <Typography>
-                <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-              </Typography>
-            )}
-          </Form.Item>
         </Form>
       </Modal>
       <StatusModal

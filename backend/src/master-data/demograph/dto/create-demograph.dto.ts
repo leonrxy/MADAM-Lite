@@ -1,4 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
+import { CreateDemographOptionDto } from "./create-demograph-option.dto";
+import { Type } from "class-transformer";
 
 export class CreateDemographDto {
     @IsNotEmpty()
@@ -8,5 +10,8 @@ export class CreateDemographDto {
     @IsOptional()
     @IsString()
     custom_result_parameter: string;
-    
+
+    @ValidateNested({ each: true })
+    @Type(() => CreateDemographOptionDto)
+    list_of_options: CreateDemographOptionDto[];
 }

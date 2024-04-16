@@ -11,6 +11,7 @@ const AddUser = ({ open, setOpen }) => {
   const [form] = Form.useForm(); // Inisialisasi form
 
   const handleCancel = () => {
+    form.resetFields();
     setOpen(false); // Menutup modal saat tombol Cancel ditekan
   };
 
