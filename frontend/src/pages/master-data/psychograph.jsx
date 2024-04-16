@@ -1,8 +1,6 @@
 import DashboardLayout from "../../layouts/Dashboard.layout";
-import { Layout } from "antd";
 import { Helmet, HelmetProvider } from "react-helmet-async";
-
-const { Content } = Layout;
+import PsychographList from "../../components/master-data/psychograph/PsychographList";
 
 const Psychograph = () => {
   return (
@@ -14,7 +12,7 @@ const Psychograph = () => {
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/star.svg" />
         </Helmet>
-        <Content className="p-6">Psychograph Content</Content>
+        <PsychographList />
       </DashboardLayout>
     </HelmetProvider>
   );
