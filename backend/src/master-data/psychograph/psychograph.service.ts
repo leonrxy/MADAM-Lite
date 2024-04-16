@@ -38,7 +38,7 @@ export class PsychographService {
       await this.activityHistoryRepository.save(activityHistory);
 
       return {
-        success: true,
+        status: "success",
         message: 'Psychograph created successfully',
         data: savedPsychograph,
       };
@@ -49,6 +49,18 @@ export class PsychographService {
 
   async findAll(): Promise<Psychograph[]> {
     return await this.psychographRepository.find();
+  }
+
+  async findPsychograph(type: string): Promise<Psychograph[]> {
+    try {
+      const psychograph = await this.psychographRepository.find({ where: { type: type } });
+      if(!psychograph){
+        return null;
+      }
+      return psychograph;
+    } catch (error) {
+      throw new InternalServerErrorException(`Failed to get psychograph type '${type}'`);
+    }
   }
 
   async findOne(psychograph_id: number): Promise<Psychograph | any> {
@@ -76,7 +88,7 @@ export class PsychographService {
       await this.activityHistoryRepository.save(activityHistory);
 
       return {
-        success: true,
+        status: "success",
         message: 'Psychograph updated successfully',
         data: updatedPsychograph,
       };
@@ -94,7 +106,7 @@ export class PsychographService {
     try {
       const removedPsychograph = await this.psychographRepository.remove(psychograph);
       return {
-        success: true,
+        status: "success",
         message: 'Psychograph removed successfully',
         data: removedPsychograph,
       };

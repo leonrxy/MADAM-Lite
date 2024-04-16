@@ -6,7 +6,7 @@ import StatusModal from "../../StatusModal";
 
 const { Text } = Typography;
 
-const DeletePsychograph = ({ open, setOpen, psychographData }) => {
+const DeletePsychograph = ({ open, setOpen, psychographData, fetchData }) => {
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalStatus, setModalStatus] = useState("");
@@ -18,6 +18,7 @@ const DeletePsychograph = ({ open, setOpen, psychographData }) => {
       setModalMessage(message);
       setModalStatus(status === "success" ? "success" : "failed");
       setOpen(false);
+      fetchData();
       setOpenStatusModal(true);
     });
   };

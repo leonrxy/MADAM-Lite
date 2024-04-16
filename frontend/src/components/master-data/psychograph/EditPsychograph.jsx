@@ -11,6 +11,7 @@ const EditPsychograph = ({ open, setOpen, psychographData, fetchData }) => {
   const [form] = Form.useForm(); // Inisialisasi form
 
   const handleCancel = () => {
+    form.resetFields();
     setOpen(false); // Menutup modal saat tombol Cancel ditekan
   };
 
@@ -80,7 +81,6 @@ const EditPsychograph = ({ open, setOpen, psychographData, fetchData }) => {
           <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
         </div>
 
-        {/* Form untuk memasukkan data pengguna */}
         <Form
           form={form}
           layout="vertical"
@@ -93,12 +93,11 @@ const EditPsychograph = ({ open, setOpen, psychographData, fetchData }) => {
             name="type"
             label="Type"
             style={{ marginBottom: 10 }}
-            rules={[
-              { required: true, message: "Please choose type" },
-            ]}
+            rules={[{ required: true, message: "Please choose type" }]}
           >
             <Select
               placeholder="Choose Parameter Name"
+              disabled={true}
               style={{ height: 40, width: "100%" }}
             >
               <Select.Option value="activity">Activity</Select.Option>
@@ -107,12 +106,11 @@ const EditPsychograph = ({ open, setOpen, psychographData, fetchData }) => {
             </Select>
           </Form.Item>
 
-          {/* Field Username */}
           <Form.Item
             name="option_value"
             label="Option Name"
             style={{ marginBottom: 10 }}
-            rules={[{ message: "Please enter option name" }]}
+            rules={[{ required: true, message: "Please enter option name" }]}
           >
             <Input style={{ height: 40 }} placeholder="Enter Option Name" />
           </Form.Item>

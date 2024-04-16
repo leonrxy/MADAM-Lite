@@ -1,27 +1,14 @@
-import { Button, Layout, Table, Typography, Tabs } from "antd";
-import { useEffect, useState } from "react";
-import { FiPlus } from "react-icons/fi";
-import http from "../../../utils/http";
-import AddPsychograph from "./AddPsychograph";
+import { Button, Table, Typography } from "antd";
+import { useState } from "react";
 import DeletePsychograph from "./DeletePsychograph";
 import EditPsychograph from "./EditPsychograph";
 
 const { Text } = Typography;
-const { Content } = Layout;
 
-const PsychographList = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+const ActivityList = ({ data, setData, loading, tableParams, setTableParams, fetchData  }) => {
   const [selectedPsychograph, setSelectedPsychograph] = useState(null);
   const [openEditPsychograph, setOpenEditPsychograph] = useState(false);
-  const [openAddPsychograph, setOpenAddPsychograph] = useState(false);
   const [openDeletePsychograph, setOpenDeletePsychograph] = useState(false);
-  const [tableParams, setTableParams] = useState({
-    pagination: {
-      current: 1,
-      pageSize: 8,
-    },
-  });
 
   const columns = [
     {
@@ -87,37 +74,6 @@ const PsychographList = () => {
     },
   ];
 
-  const fetchData = () => {
-    setLoading(true);
-    http
-      .get("psychograph")
-      .then((data) => {
-        const mappedData = data.map((item) => {
-          const foundItem = items.find(
-            (i) => i.label.toLowerCase() === item.option_value.toLowerCase()
-          );
-          if (foundItem) {
-            return { ...item, key: foundItem.key };
-          }
-          return item;
-        });
-        setData(mappedData);
-        setLoading(false);
-        setTableParams({
-          ...tableParams,
-          pagination: {
-            ...tableParams.pagination,
-            total: mappedData.length,
-          },
-        });
-      })
-      .catch((error) => error.response);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(tableParams), openDeletePsychograph, openAddPsychograph]);
-
   const handleTableChange = (pagination, filters, sorter) => {
     setTableParams({
       pagination,
@@ -141,32 +97,8 @@ const PsychographList = () => {
     setOpenDeletePsychograph(true);
   };
 
-  const handleTabChange = (key) => {
-    console.log("Selected Tab:", key);
-  };
-
-  const items = [
-    { key: "activity", label: "Activity", content: "Content of Activity Tab" },
-    { key: "interest", label: "Interest", content: "Content of Interest Tab" },
-    { key: "opinion", label: "Opinion", content: "Content of Opinion Tab" },
-  ];
-
   return (
-    <Content className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <Text className="text-2xl font-normal">Psychograph</Text>
-        <Button
-          type="primary"
-          className="rounded-xl focus:outline-none focus:shadow-outline items-center justify-center h-10 py-2 px-4 flex items-center"
-          onClick={() => setOpenAddPsychograph(true)}
-        >
-          <FiPlus className="mr-2" />
-          Add Option
-        </Button>
-      </div>
-
-      <Tabs defaultActiveKey="1" items={items} onChange={handleTabChange} />
-
+    <div>
       <Table
         className="mt-3"
         columns={columns}
@@ -175,30 +107,24 @@ const PsychographList = () => {
         pagination={tableParams.pagination}
         loading={loading}
         onChange={handleTableChange}
-        // size="middle"
         onRow={(record) => ({
           onClick: () => setSelectedPsychograph(record),
         })}
       />
-
       <EditPsychograph
         open={openEditPsychograph}
         setOpen={setOpenEditPsychograph}
         psychographData={selectedPsychograph}
-        fetchData={fetchData}
+        fetchData={() => fetchData("activity")}
       />
       <DeletePsychograph
         open={openDeletePsychograph}
         setOpen={setOpenDeletePsychograph}
         psychographData={selectedPsychograph}
-        fetchData={fetchData}
+        fetchData={() => fetchData("activity")}
       />
-      <AddPsychograph
-        open={openAddPsychograph}
-        setOpen={setOpenAddPsychograph}
-      />
-    </Content>
+    </div>
   );
 };
 
-export default PsychographList;
+export default ActivityList;

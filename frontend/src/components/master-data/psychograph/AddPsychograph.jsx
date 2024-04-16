@@ -1,17 +1,17 @@
-import { Button, Form, Input, Modal, Select, Typography } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Modal, Select } from "antd";
 import PlusIcon from "../../../assets/Plus.svg";
 import { useState } from "react";
 import http from "../../../utils/http";
 import StatusModal from "../../StatusModal";
 
-const AddPsychograph = ({ open, setOpen }) => {
+const AddPsychograph = ({ open, setOpen, fetchData }) => {
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalStatus, setModalStatus] = useState("");
   const [form] = Form.useForm();
 
   const handleCancel = () => {
+    form.resetFields();
     setOpen(false);
   };
 
@@ -24,9 +24,10 @@ const AddPsychograph = ({ open, setOpen }) => {
           const { message, status } = res;
           setModalMessage(message);
           setModalStatus(status === "success" ? "success" : "failed");
-          form.resetFields(); // Mengosongkan form setelah disimpan
-          setOpen(false); // Menutup modal setelah disimpan
-          setOpenStatusModal(true); // Membuka modal status
+          form.resetFields();
+          setOpen(false);
+          fetchData(values.type);
+          setOpenStatusModal(true);
         });
       })
       .catch((errorInfo) => {
@@ -62,39 +63,28 @@ const AddPsychograph = ({ open, setOpen }) => {
         >
           <hr style={{ flex: 1, borderColor: "lightgray", margin: 0 }} />
         </div>
-        <Form
-          form={form}
-          layout="vertical"
-          requiredMark={false}
-          initialValues={{
-            list_option_value: [{}],
-          }}
-        >
-          {/* Field Name */}
+        <Form form={form} layout="vertical" requiredMark={false}>
           <Form.Item
             name="type"
-            label="Parameter Name"
+            label="Type"
             style={{ marginBottom: 10 }}
-            rules={[
-              { required: true, message: "Please choose parameter name" },
-            ]}
+            rules={[{ required: true, message: "Please choose type" }]}
           >
             <Select
-              placeholder="Choose Parameter Name"
+              placeholder="Choose Type"
               style={{ height: 40, width: "100%" }}
             >
-              <Option value="Activity">Activity</Option>
-              <Option value="Interest">Interest</Option>
-              <Option value="Opinion">Opinion</Option>
+              <Select.Option value="activity">Activity</Select.Option>
+              <Select.Option value="interest">Interest</Select.Option>
+              <Select.Option value="opinion">Opinion</Select.Option>
             </Select>
           </Form.Item>
 
-          {/* Field Username */}
           <Form.Item
             name="option_value"
             label="Option Name"
             style={{ marginBottom: 10 }}
-            rules={[{ message: "Please enter option name" }]}
+            rules={[{ required: true, message: "Please enter option name" }]}
           >
             <Input style={{ height: 40 }} placeholder="Enter Option Name" />
           </Form.Item>

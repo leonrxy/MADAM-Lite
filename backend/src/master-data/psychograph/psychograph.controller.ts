@@ -7,7 +7,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 @Controller('psychograph')
 @UseGuards(new JwtAuthGuard(['superadmin']))
 export class PsychographController {
-  constructor(private readonly psychographService: PsychographService) {}
+  constructor(private readonly psychographService: PsychographService) { }
 
   @Post()
   create(@Body() createPsychographDto: CreatePsychographDto, @Request() req) {
@@ -18,6 +18,11 @@ export class PsychographController {
   @Get()
   findAll() {
     return this.psychographService.findAll();
+  }
+
+  @Get('type/:type')
+  findPsychograph(@Param('type') type: string) {
+    return this.psychographService.findPsychograph(type);
   }
 
   @Get(':id')
